@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>中国AI科技产业版图 2026</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700;800;900&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #04040c;
+    --bg2: #09091a;
+    --bg3: #0f0f22;
+    --red: #ef4444;
+    --amber: #f59e0b;
+    --green: #10b981;
+    --blue: #3b82f6;
+    --purple: #8b5cf6;
+    --pink: #ec4899;
+    --cyan: #06b6d4;
+    --text: #f0f0fa;
+    --text2: #8888a8;
+    --text3: #44445a;
+    --border: rgba(255,255,255,0.06);
+    --card: rgba(255,255,255,0.02);
+  }
+  body {
+    font-family: 'Noto Sans SC', -apple-system, sans-serif;
+    background: var(--bg); color: var(--text);
+    min-height: 100vh; overflow-x: hidden;
+  }
+  .bg-gradient {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background: 
+      radial-gradient(ellipse at 15% 20%, rgba(239,68,68,0.05) 0%, transparent 50%),
+      radial-gradient(ellipse at 85% 80%, rgba(139,92,246,0.05) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, rgba(6,182,212,0.02) 0%, transparent 70%);
+  }
+  .container { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; padding: 0 24px 80px; }
+
+  /* Header */
+  header {
+    text-align: center; padding: 48px 24px 32px;
+    background: linear-gradient(180deg, rgba(239,68,68,0.06) 0%, transparent 100%);
+  }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.15);
+    border-radius: 100px; padding: 5px 14px; font-size: 11px; font-weight: 600;
+    color: #f87171; margin-bottom: 14px; letter-spacing: 0.5px;
+  }
+  .eyebrow .dot { width: 6px; height: 6px; background: #10b981; border-radius: 50%; animation: blink 1.5s infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+  h1 {
+    font-size: clamp(26px, 5vw, 52px); font-weight: 900; letter-spacing: -1.5px;
+    background: linear-gradient(135deg, #fff 20%, #f87171 60%, #fbbf24 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  .subtitle { color: var(--text2); font-size: 14px; }
+  .date { color: var(--text3); font-size: 11px; margin-top: 4px; }
+
+  /* Hero Banner */
+  .hero-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 40px;
+  }
+  .hero-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 22px 20px;
+    position: relative; overflow: hidden;
+    transition: transform 0.25s, border-color 0.25s;
+  }
+  .hero-card:hover { transform: translateY(-3px); }
+  .hero-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  }
+  .hero-card.red::before { background: linear-gradient(90deg, var(--red), transparent); }
+  .hero-card.amber::before { background: linear-gradient(90deg, var(--amber), transparent); }
+  .hero-card.green::before { background: linear-gradient(90deg, var(--green), transparent); }
+  .hero-card.blue::before { background: linear-gradient(90deg, var(--blue), transparent); }
+  .hero-card.purple::before { background: linear-gradient(90deg, var(--purple), transparent); }
+  .hero-card.pink::before { background: linear-gradient(90deg, var(--pink), transparent); }
+  .hero-card.cyan::before { background: linear-gradient(90deg, var(--cyan), transparent); }
+  .hero-card.orange::before { background: linear-gradient(90deg, #f97316, transparent); }
+  .hc-eyebrow { font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text3); margin-bottom: 6px; }
+  .hc-value { font-size: 28px; font-weight: 900; color: #fff; line-height: 1.1; margin-bottom: 4px; }
+  .hc-sub { font-size: 11px; color: var(--text2); }
+  .hc-icon { position: absolute; top: 16px; right: 16px; font-size: 22px; opacity: 0.3; }
+
+  /* Section label */
+  .slabel {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px;
+    color: var(--text3); margin-bottom: 14px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .slabel::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  /* Landscape Grid */
+  .landscape-section { margin-bottom: 40px; }
+  .sector-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px;
+  }
+  .sector-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 20px;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .sector-card:hover { transform: translateY(-2px); }
+  .sector-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .sector-icon { font-size: 22px; flex-shrink: 0; }
+  .sector-title { font-size: 15px; font-weight: 800; color: #fff; }
+  .sector-sub { font-size: 11px; color: var(--text3); }
+  .sector-stat { display: flex; gap: 12px; margin-bottom: 12px; }
+  .ss-item { flex: 1; background: rgba(255,255,255,0.03); border-radius: 8px; padding: 8px 10px; }
+  .ss-val { font-size: 16px; font-weight: 800; color: #fff; }
+  .ss-label { font-size: 10px; color: var(--text3); margin-top: 2px; }
+  .player-list { display: flex; flex-direction: column; gap: 6px; }
+  .player-row { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 12px; color: var(--text2); }
+  .player-row:last-child { border-bottom: none; }
+  .player-name { font-weight: 600; color: #fff; min-width: 80px; }
+  .player-tag {
+    padding: 2px 7px; border-radius: 4px; font-size: 10px; font-weight: 600;
+    margin-left: auto; flex-shrink: 0;
+  }
+  .tag-red { background: rgba(239,68,68,0.12); color: #f87171; }
+  .tag-amber { background: rgba(245,158,11,0.12); color: #fbbf24; }
+  .tag-green { background: rgba(16,185,129,0.12); color: #34d399; }
+  .tag-blue { background: rgba(59,130,246,0.12); color: #60a5fa; }
+  .tag-purple { background: rgba(139,92,246,0.12); color: #a78bfa; }
+  .tag-pink { background: rgba(236,72,153,0.12); color: #f472b6; }
+  .tag-cyan { background: rgba(6,182,212,0.12); color: #22d3ee; }
+  .tag-orange { background: rgba(249,115,22,0.12); color: #fb923c; }
+
+  /* Timeline */
+  .timeline-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 22px; margin-bottom: 40px;
+  }
+  .tl-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .tl-item { display: flex; gap: 10px; padding: 8px 0; }
+  .tl-date { font-size: 10px; color: var(--text3); width: 50px; flex-shrink: 0; margin-top: 2px; }
+  .tl-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+  .tl-text { font-size: 12px; color: var(--text2); line-height: 1.5; }
+  .tl-text strong { color: #fff; }
+
+  /* Chart row */
+  .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 40px; }
+  .chart-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 22px;
+  }
+  .chart-title { font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 18px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .hbar-list { display: flex; flex-direction: column; gap: 12px; }
+  .hbar-row { display: flex; align-items: center; gap: 10px; }
+  .hbar-label { font-size: 11px; color: var(--text2); width: 90px; text-align: right; flex-shrink: 0; }
+  .hbar-track { flex: 1; height: 18px; background: rgba(255,255,255,0.04); border-radius: 9px; overflow: hidden; }
+  .hbar-fill { height: 100%; border-radius: 9px; display: flex; align-items: center; padding: 0 8px; transition: width 1.2s cubic-bezier(0.4,0,0.2,1); }
+  .hbar-fill span { font-size: 10px; font-weight: 700; color: #fff; white-space: nowrap; }
+  .hbar-fill.red { background: linear-gradient(90deg, #dc2626, #ef4444); }
+  .hbar-fill.amber { background: linear-gradient(90deg, #d97706, #f59e0b); }
+  .hbar-fill.green { background: linear-gradient(90deg, #059669, #10b981); }
+  .hbar-fill.blue { background: linear-gradient(90deg, #2563eb, #3b82f6); }
+  .hbar-fill.purple { background: linear-gradient(90deg, #7c3aed, #8b5cf6); }
+  .hbar-fill.pink { background: linear-gradient(90deg, #db2777, #ec4899); }
+  .hbar-fill.cyan { background: linear-gradient(90deg, #0891b2, #06b6d4); }
+
+  .bubble-list { display: flex; flex-wrap: wrap; gap: 8px; }
+  .bubble {
+    display: flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 100px; padding: 5px 12px; font-size: 12px; color: var(--text2);
+    transition: all 0.2s;
+  }
+  .bubble:hover { border-color: rgba(255,255,255,0.15); color: #fff; }
+  .bubble-dot { width: 6px; height: 6px; border-radius: 50%; }
+  .bubble strong { color: #fff; font-weight: 600; }
+
+  /* Quote */
+  .quote-banner {
+    background: linear-gradient(135deg, rgba(239,68,68,0.05), rgba(139,92,246,0.04));
+    border: 1px solid rgba(239,68,68,0.1);
+    border-radius: 18px; padding: 28px 32px; margin-bottom: 40px;
+    text-align: center;
+  }
+  .quote-text { font-size: 18px; font-weight: 700; color: #fff; line-height: 1.6; margin-bottom: 8px; }
+  .quote-sub { font-size: 13px; color: var(--text2); }
+
+  footer { text-align: center; padding: 30px 0 20px; color: var(--text3); font-size: 11px; line-height: 1.8; }
+
+  @media (max-width: 900px) {
+    .hero-grid { grid-template-columns: repeat(2, 1fr); }
+    .chart-row { grid-template-columns: 1fr; }
+    .tl-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .hero-grid { grid-template-columns: 1fr; }
+  }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .a { animation: fadeUp 0.5s ease forwards; opacity: 0; }
+  .d1 { animation-delay: 0.1s; }
+  .d2 { animation-delay: 0.2s; }
+  .d3 { animation-delay: 0.3s; }
+  .d4 { animation-delay: 0.4s; }
+</style>
+</head>
+<body>
+<div class="bg-gradient"></div>
+
+<div class="container">
+  <header>
+    <div class="eyebrow"><span class="dot"></span>2026年3月 · 实时全景</div>
+    <h1>中国AI科技产业版图</h1>
+    <p class="subtitle">从大模型到底层芯片 · 全产业链深度追踪</p>
+    <p class="date">数据截至 2026年3月 · 研究截止日期</p>
+  </header>
+
+  <!-- Hero Stats -->
+  <div class="hero-grid">
+    <div class="hero-card red a d1">
+      <div class="hc-eyebrow">2026年中国AI总投资</div>
+      <div class="hc-value">¥8900亿</div>
+      <div class="hc-sub">同比增长 +18% YoY</div>
+      <div class="hc-icon">💰</div>
+    </div>
+    <div class="hero-card amber a d2">
+      <div class="hc-eyebrow">NVIDIA Q1全球AI投资</div>
+      <div class="hc-value">$600亿</div>
+      <div class="hc-sub">9家企业 · 密集出手</div>
+      <div class="hc-icon">🟢</div>
+    </div>
+    <div class="hero-card green a d3">
+      <div class="hc-eyebrow">DeepSeek V4 API价格</div>
+      <div class="hc-value">GPT-5的<br>1/20</div>
+      <div class="hc-sub">仅 ¥5.6/百万Token</div>
+      <div class="hc-icon">⚡</div>
+    </div>
+    <div class="hero-card blue a d4">
+      <div class="hc-eyebrow">字节跳动 2026 AI预算</div>
+      <div class="hc-value">$228亿</div>
+      <div class="hc-sub">1600亿人民币 · 全球第一</div>
+      <div class="hc-icon">🏢</div>
+    </div>
+  </div>
+
+  <!-- Sectors -->
+  <div class="landscape-section">
+    <div class="slabel">🏭 产业版图 · 8大赛道</div>
+    <div class="sector-grid">
+
+      <!-- Foundation Models -->
+      <div class="sector-card">
+        <div class="sector-header">
+          <div class="sector-icon">🧠</div>
+          <div>
+            <div class="sector-title">基础大模型</div>
+            <div class="sector-sub">多模态 · 推理 · 开源生态</div>
+          </div>
+        </div>
+        <div class="sector-stat">
+          <div class="ss-item"><div class="ss-val">DeepSeek V4</div><div class="ss-label">GPT-5的1/20价格</div></div>
+          <div class="ss-item"><div class="ss-val">GLM-5</div><div class="ss-label">开源全球第一</div></div>
+        </div>
+        <div class="player-list">
+          <div class="player-row"><span class="player-name">DeepSeek</span>多模态全能 · 百万Token上下文<span class="player-tag tag-blue">领先</span></div>
+          <div class="player-row"><span class="player-name">智谱 GLM-5</span>编程对齐Claude Opus 4.5<span class="player-tag tag-purple">港股上市</span></div>
+          <div class="player-row"><span class="player-name">Kimi K2.5</span>100个分身并行处理1500步<span class="player-tag tag-amber">$100亿独角兽</span></div>
+          <div class="player-row"><span class="player-name">MiniMax M2.5</span>OpenRouter调用量第一<span class="player-tag tag-green">港股上市</span></div>
+          <div class="player-row"><span class="player-name">阿里 Qwen3.5</span>3970亿参数 · Gemini 3 Pro水平<span class="player-tag tag-cyan">全面开源</span></div>
+        </div>
+      </div>
+
+      <!-- AI Video -->
+      <div class="sector-card">
+        <div class="sector-header">
+          <div class="sector-icon">🎬</div>
+          <div>
+            <div class="sector-title">AI视频生成</div>
+            <div class="sector-sub">全球领先 · 三足鼎立</div>
+          </div>
+        </div>
+        <div class="sector-stat">
+          <div class="ss-item"><div class="ss-val">6000万+</div><div class="ss-label">可灵AI创作者</div></div>
+          <div class="ss-item"><div class="ss-val">6亿+</div><div class="ss-label">可灵AI生成视频</div></div>
+        </div>
+        <div class="player-list">
+          <div class="player-row"><span class="player-name">字节 Seedance 2.0</span>60秒 · 4模态 · 超越Sora<span class="player-tag tag-red">全球新王</span></div>
+          <div class="player-row"><span class="player-name">快手 可灵AI 3.0</span>股价+84% · 6000万创作者<span class="player-tag tag-amber">平台独大</span></div>
+          <div class="player-row"><span class="player-name">生数 Vidu Q3</span>全球第二 · 16秒声画同步<span class="player-tag tag-green">A+轮6亿</span></div>
+          <div class="player-row"><span class="player-name">爱诗科技</span>字节系 · 8轮融资 · 儒意亿元<span class="player-tag tag-purple">影视方向</span></div>
+        </div>
+      </div>
+
+      <!-- AI Agent -->
+      <div class="sector-card">
+        <div class="sector-header">
+          <div class="sector-icon">🤖</div>
+          <div>
+            <div class="sector-title">AI Agent 智能体</div>
+            <div class="sector-sub">Manus收购 · OpenClaw爆发</div>
+          </div>
+        </div>
+        <div class="sector-stat">
+          <div class="ss-item"><div class="ss-val">Manus</div><div class="ss-label">8个月ARR破亿</div></div>
+          <div class="ss-item"><div class="ss-val">MCP 97M</div><div class="ss-label">月度SDK下载</div></div>
+        </div>
+        <div class="player-list">
+          <div class="player-row"><span class="player-name">Manus</span>Meta $20亿收购 · 8个月破亿<span class="player-tag tag-green">被收购</span></div>
+          <div class="player-row"><span class="player-name">OpenClaw</span>开源横扫中国 · 硅谷5倍速度<span class="player-tag tag-blue">框架爆发</span></div>
+          <div class="player-row"><span class="player-name">Harvey AI</span>法律AI · $110亿估值<span class="player-tag tag-purple">1年翻4倍</span></div>
+          <div class="player-row"><span class="player-name">百度·阿里·腾讯</span>全面接入OpenClaw<span class="player-tag tag-red">巨头入场</span></div>
+        </div>
+      </div>
+
+      <!-- AI Chips -->
+      <div class="sector-card">
+        <div class="sector-header">
+          <div class="sector-icon">💎</div>
+          <div>
+            <div class="sector-title">AI芯片 · 国产替代</div>
+            <div class="sector-sub">算力自主 · 打破封锁</div>
+          </div>
+        </div>
+        <div class="sector-stat">
+          <div class="ss-item"><div class="ss-val">摩尔线程</div><div class="ss-label">MTT S5000对标H100</div></div>
+          <div class="ss-item"><div class="ss-val">寒武纪</div><div class="ss-label">$4726亿市值</div></div>
+        </div>
+        <div class="player-list">
+          <div class="player-row"><span class="player-name">摩尔线程</span>MTT S5000部分超越H100<span class="player-tag tag-green">突破</span></div>
+          <div class="player-row"><span class="player-name">寒武纪</span>AI芯片龙头 · 4726亿市值<span class="player-tag tag-blue">龙头</span></div>
+          <div class="player-row"><span class="player-name">龙芯中科</span>全力发展中高端显卡9A2000<span class="player-tag tag-amber">研发中</span></div>
+          <div class="player-row"><span class="player-name">Etched.ai</span>Transformer专用ASIC<span class="player-tag tag-purple">哈佛00后</span></div>
+        </div>
+      </div>
+
+      <!-- Robotics -->
+      <div class="sector-card">
+        <div class="sector-header">
+          <div class="sector-icon">🦾</div>
+          <div>
+            <div class="sector-title">具身智能 · 人形机器人</div>
+            <div class="sector-sub">2026春晚集体亮相</div>
+          </div>
+        </div>
+        <div class="sector-stat">
+          <div class="ss-item"><div class="ss-val">宇树H1</div><div class="ss-label">春晚舞蹈惊艳</div></div>
+          <div class="ss-item"><div class="ss-val">银河通用</div><div class="ss-label">2026春晚合作</div></div>
+        </div>
+        <div class="player-list">
+          <div class="player-row"><span class="player-name">宇树科技</span>人形机器人 · 春晚舞台<span class="player-tag tag-green">率先量产</span></div>
+          <div class="player-row"><span class="player-name">银河通用</span>2026春晚合作 · 泛化操作<span class="player-tag tag-blue">待突破</span></div>
+          <div class="player-row"><span class="player-name">Figure Helix 02</span>用脚开门 · 全身操作升级<span class="player-tag tag-purple">国际标杆</span></div>
+          <div class="player-row"><span class="player-name">Bedrock Robotics</span>NVIDIA投资 · $2.7亿B轮<span class="player-tag tag-amber">建筑机器人</span></div>
+        </div>
+      </div>
+
+      <!-- AI Unicorns -->
+      <div class="sector-card">
+        <div class="sector-header">
+          <div class="sector-icon">🦄</div>
+          <div>
+            <div class="sector-title">AI独角兽 · 2026新增9家</div>
+            <div class="sector-sub">全球AI独角兽版图</div>
+          </div>
+        </div>
+        <div class="sector-stat">
+          <div class="ss-item"><div class="ss-val">$2.2万亿</div><div class="ss-label">全球AI独角兽总估值</div></div>
+          <div class="ss-item"><div class="ss-val">9家</div><div class="ss-label">2026年1月新增</div></div>
+        </div>
+        <div class="player-list">
+          <div class="player-row"><span class="player-name">OpenAI</span>$7300亿估值 · $300亿融资<span class="player-tag tag-green">全球第一</span></div>
+          <div class="player-row"><span class="player-name">Anthropic</span>$3800亿估值 · $300亿G轮<span class="player-tag tag-purple">Claude年收$140亿</span></div>
+          <div class="player-row"><span class="player-name">xAI</span>$200亿融资 · 全球最大GPU集群<span class="player-tag tag-red">马斯克</span></div>
+          <div class="player-row"><span class="player-name">Waabi</span>$30亿估值 · L4自动驾驶<span class="player-tag tag-cyan">加拿大</span></div>
+        </div>
+      </div>
+
+      <!-- Quantum Computing -->
+      <div class="sector-card">
+        <div class="sector-header">
+          <div class="sector-icon">⚛️</div>
+          <div>
+            <div class="sector-title">量子计算</div>
+            <div class="sector-sub">2026 Q1融资逼近2025全年</div>
+          </div>
+        </div>
+        <div class="sector-stat">
+          <div class="ss-item"><div class="ss-val">¥22亿</div><div class="ss-label">2026 Q1融资（截至3月）</div></div>
+          <div class="ss-item"><div class="ss-val">¥25亿</div><div class="ss-label">2025年全年融资</div></div>
+        </div>
+        <div class="player-list">
+          <div class="player-row"><span class="player-name">国仪量子</span>$80亿估值 · 量子精密测量<span class="player-tag tag-blue">行业龙头</span></div>
+          <div class="player-row"><span class="player-name">图灵量子</span>$70亿估值 · 光量子芯片<span class="player-tag tag-purple">累计10亿+</span></div>
+          <div class="player-row"><span class="player-name">本源量子</span>$68.8亿估值 · 超导量子<span class="player-tag tag-green">最完整生态</span></div>
+          <div class="player-row"><span class="player-name">逻辑比特</span>浙大团队 · Pre-A+轮数亿元<span class="player-tag tag-amber">2026最快融资</span></div>
+        </div>
+      </div>
+
+      <!-- AI Infrastructure -->
+      <div class="sector-card">
+        <div class="sector-header">
+          <div class="sector-icon">☁️</div>
+          <div>
+            <div class="sector-title">AI基础设施</div>
+            <div class="sector-sub">云端算力 · 数据中心</div>
+          </div>
+        </div>
+        <div class="sector-stat">
+          <div class="ss-item"><div class="ss-val">$6600亿</div><div class="ss-label">全球科技巨头2026 capex</div></div>
+          <div class="ss-item"><div class="ss-val">$22.8亿</div><div class="ss-label">字节AI投资预算</div></div>
+        </div>
+        <div class="player-list">
+          <div class="player-row"><span class="player-name">阿里云百炼</span>四大开源模型API · Coding Plan<span class="player-tag tag-cyan">全模型接入</span></div>
+          <div class="player-row"><span class="player-name">百度AI</span>7亿月活App接入OpenClaw<span class="player-tag tag-blue">流量入口</span></div>
+          <div class="player-row"><span class="player-name">腾讯云</span>OpenClaw云端服务<span class="player-tag tag-green">预配置上线</span></div>
+          <div class="player-row"><span class="player-name">字节火山引擎</span>OpenClaw预配置<span class="player-tag tag-red">全力投入</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Timeline -->
+  <div class="slabel">📅 2026 Q1 重大事件时间线</div>
+  <div class="timeline-card">
+    <div class="tl-grid">
+      <div class="tl-item">
+        <div class="tl-dot" style="background:#ef4444"></div>
+        <div class="tl-text"><strong style="color:#f87171">2026-01-06</strong> · xAI完成$200亿融资，建全球最大GPU集群</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="background:#f59e0b"></div>
+        <div class="tl-text"><strong style="color:#fbbf24">2026-01-30</strong> · 生数科技发布Vidu Q3，全球AI视频排名第二</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="background:#10b981"></div>
+        <div class="tl-text"><strong style="color:#34d399">2026-02-05</strong> · 快手可灵AI 3.0全球上线，股价单年涨幅84%</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="background:#3b82f6"></div>
+        <div class="tl-text"><strong style="color:#60a5fa">2026-02-12</strong> · 字节Seedance 2.0发布，马斯克X平台转发</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="background:#8b5cf6"></div>
+        <div class="tl-text"><strong style="color:#a78bfa">2026-02-13</strong> · Anthropic完成$300亿G轮融资，估值$3800亿</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="background:#ec4899"></div>
+        <div class="tl-text"><strong style="color:#f472b6">2026-02-16</strong> · 阿里发布Qwen3.5-Plus，性能媲美Gemini 3 Pro</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="background:#06b6d4"></div>
+        <div class="tl-text"><strong style="color:#22d3ee">2026-02-27</strong> · OpenAI获亚马逊$500亿战略投资</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="background:#ef4444"></div>
+        <div class="tl-text"><strong style="color:#f87171">2026-03-12</strong> · <strong style="color:#fbbf24">DeepSeek V4凌晨突袭上线</strong>，API价格GPT-5的1/20</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="chart-row">
+    <div class="chart-card">
+      <div class="chart-title">💰 2026年各赛道AI投资占比</div>
+      <div class="hbar-list">
+        <div class="hbar-row">
+          <div class="hbar-label">基础模型</div>
+          <div class="hbar-track"><div class="hbar-fill red" style="width:0%"><span>¥2580亿 · 29%</span></div></div>
+        </div>
+        <div class="hbar-row">
+          <div class="hbar-label">政府投资</div>
+          <div class="hbar-track"><div class="hbar-fill amber" style="width:0%"><span>¥3450亿 · 39%</span></div></div>
+        </div>
+        <div class="hbar-row">
+          <div class="hbar-label">企业研发</div>
+          <div class="hbar-track"><div class="hbar-fill green" style="width:0%"><span>¥2580亿 · 29%</span></div></div>
+        </div>
+        <div class="hbar-row">
+          <div class="hbar-label">VC私募</div>
+          <div class="hbar-track"><div class="hbar-fill blue" style="width:0%"><span>¥287亿 · 3%</span></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">🌍 量子计算融资地域分布（亿元）</div>
+      <div class="hbar-list">
+        <div class="hbar-row">
+          <div class="hbar-label">合肥</div>
+          <div class="hbar-track"><div class="hbar-fill cyan" style="width:0%"><span>31.9亿 · 28%</span></div></div>
+        </div>
+        <div class="hbar-row">
+          <div class="hbar-label">北京</div>
+          <div class="hbar-track"><div class="hbar-fill purple" style="width:0%"><span>25.7亿 · 23%</span></div></div>
+        </div>
+        <div class="hbar-row">
+          <div class="hbar-label">上海</div>
+          <div class="hbar-track"><div class="hbar-fill red" style="width:0%"><span>24.4亿 · 22%</span></div></div>
+        </div>
+        <div class="hbar-row">
+          <div class="hbar-label">其他</div>
+          <div class="hbar-track"><div class="hbar-fill blue" style="width:0%"><span>31.6亿 · 28%</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Key Investors -->
+  <div class="slabel">🏦 核心投资方布局</div>
+  <div class="chart-card" style="margin-bottom:40px;">
+    <div class="chart-title">🤝 2026年最活跃AI投资方</div>
+    <div class="bubble-list" style="margin-top:12px;">
+      <div class="bubble"><div class="bubble-dot" style="background:#ef4444"></div><strong>NVIDIA</strong> · $600亿 · 9家企业</div>
+      <div class="bubble"><div class="bubble-dot" style="background:#10b981"></div><strong>Benchmark</strong> · Manus领投</div>
+      <div class="bubble"><div class="bubble-dot" style="background:#3b82f6"></div><strong>腾讯</strong> · Manus跟投</div>
+      <div class="bubble"><div class="bubble-dot" style="background:#8b5cf6"></div><strong>阿里巴巴</strong> · 智谱/MiniMax/阶跃</div>
+      <div class="bubble"><div class="bubble-dot" style="background:#f59e0b"></div><strong>红杉/高瓴</strong> · Manus投资方</div>
+      <div class="bubble"><div class="bubble-dot" style="background:#ec4899"></div><strong>GIC</strong> · Harvey AI领投</div>
+      <div class="bubble"><div class="bubble-dot" style="background:#06b6d4"></div><strong>百度风投</strong> · Vattention</div>
+      <div class="bubble"><div class="bubble-dot" style="background:#f97316"></div><strong>IDG资本</strong> · Nemo Video领投</div>
+      <div class="bubble"><div class="bubble-dot" style="background:#10b981"></div><strong>亚马逊</strong> · OpenAI $500亿</div>
+      <div class="bubble"><div class="bubble-dot" style="background:#6366f1"></div><strong>软银</strong> · OpenAI $300亿</div>
+      <div class="bubble"><div class="bubble-dot" style="background:#ef4444"></div><strong>中科创星</strong> · 量子计算10次出手</div>
+      <div class="bubble"><div class="bubble-dot" style="background:#f59e0b"></div><strong>鼎晖投资</strong> · 图灵量子</div>
+    </div>
+  </div>
+
+  <!-- Quote -->
+  <div class="quote-banner">
+    <div class="quote-text">"DeepSeek V4用凌晨突袭的方式上线，向全球宣告：<br>中国大模型具备正面抗衡巨头的实力。"</div>
+    <div class="quote-sub">2026年3月12日 · DeepSeek V4发布 · 东方财富网</div>
+  </div>
+
+  <footer>
+    数据来源：IT桔子 · 睿兽分析 · 东方财富 · 中金公司 · 安联投资 · 国信证券 · 安信证券 · 中证网 · 新浪财经 · 36氪 · 中国证券报<br>
+    中国AI科技产业版图 2026 · 研究截止日期：2026年3月 · 仅供研究参考
+  </footer>
+</div>
+
+<script>
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    const widths = [29, 39, 29, 3];
+    const widths2 = [28, 23, 22, 28];
+    document.querySelectorAll('.hbar-list').forEach((list, li) => {
+      const bars = list.querySelectorAll('.hbar-fill');
+      const vals = li === 0 ? widths : widths2;
+      bars.forEach((bar, i) => {
+        setTimeout(() => { bar.style.width = vals[i] + '%'; }, i * 150);
+      });
+    });
+  }, 400);
+});
+</script>
+</body>
+</html>

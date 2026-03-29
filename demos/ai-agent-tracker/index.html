@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Agent元年追踪器 2026</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #06060e;
+    --bg2: #0d0d18;
+    --bg3: #13132a;
+    --manus: #00d4aa;
+    --openclaw: #f59e0b;
+    --harvey: #8b5cf6;
+    --mcp: #3b82f6;
+    --text: #f1f1f8;
+    --text2: #9090b0;
+    --text3: #55556a;
+    --border: rgba(255,255,255,0.06);
+    --card: rgba(255,255,255,0.02);
+  }
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg); color: var(--text);
+    min-height: 100vh; overflow-x: hidden;
+  }
+  .bg-mesh {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background: 
+      radial-gradient(ellipse at 20% 0%, rgba(59,130,246,0.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 100%, rgba(245,158,11,0.05) 0%, transparent 50%);
+  }
+  .container { position: relative; z-index: 1; max-width: 1300px; margin: 0 auto; padding: 0 24px 80px; }
+
+  /* Hero */
+  .hero {
+    text-align: center; padding: 56px 24px 40px;
+  }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(0,212,170,0.08); border: 1px solid rgba(0,212,170,0.15);
+    border-radius: 100px; padding: 6px 16px; font-size: 12px; color: var(--manus);
+    margin-bottom: 16px; font-weight: 500;
+  }
+  .hero-eyebrow .dot { width: 7px; height: 7px; background: var(--manus); border-radius: 50%; animation: blink 1.5s infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+  h1 {
+    font-size: clamp(28px, 5vw, 52px); font-weight: 900; letter-spacing: -1.5px;
+    background: linear-gradient(135deg, #fff 20%, #60a5fa 60%, #a78bfa 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 10px;
+  }
+  .hero-sub { color: var(--text2); font-size: 15px; }
+
+  /* Top Banner */
+  .top-banner {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 40px;
+  }
+  .promo-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 18px; padding: 24px; text-align: center;
+    transition: transform 0.25s, border-color 0.25s;
+  }
+  .promo-card:hover { transform: translateY(-3px); }
+  .promo-card.manus { border-color: rgba(0,212,170,0.2); }
+  .promo-card.manus:hover { border-color: rgba(0,212,170,0.5); }
+  .promo-card.openclaw { border-color: rgba(245,158,11,0.2); }
+  .promo-card.openclaw:hover { border-color: rgba(245,158,11,0.5); }
+  .promo-card.harvey { border-color: rgba(139,92,246,0.2); }
+  .promo-card.harvey:hover { border-color: rgba(139,92,246,0.5); }
+  .promo-eyebrow { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--text3); margin-bottom: 8px; }
+  .promo-icon { font-size: 28px; margin-bottom: 8px; }
+  .promo-name { font-size: 18px; font-weight: 800; margin-bottom: 4px; }
+  .manus .promo-name { color: var(--manus); }
+  .openclaw .promo-name { color: var(--openclaw); }
+  .harvey .promo-name { color: var(--harvey); }
+  .promo-stat { font-size: 26px; font-weight: 900; color: #fff; margin-bottom: 4px; }
+  .promo-desc { font-size: 12px; color: var(--text2); }
+
+  /* Stats Grid */
+  .stats-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 40px;
+  }
+  .stat-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+    padding: 20px; position: relative; overflow: hidden;
+    transition: transform 0.2s;
+  }
+  .stat-card:hover { transform: translateY(-2px); }
+  .stat-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(59,130,246,0.4), transparent);
+  }
+  .stat-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text3); margin-bottom: 8px; }
+  .stat-value { font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 3px; }
+  .stat-sub { font-size: 11px; color: var(--text3); }
+
+  /* Section label */
+  .section-label {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px;
+    color: var(--text3); margin-bottom: 14px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  /* Table */
+  .table-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; overflow: hidden; margin-bottom: 40px;
+  }
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    padding: 12px 18px; text-align: left; font-size: 10px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.8px; color: var(--text3);
+    border-bottom: 1px solid var(--border);
+    background: rgba(255,255,255,0.015);
+  }
+  tbody td { padding: 14px 18px; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.03); vertical-align: middle; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: rgba(0,212,170,0.03); }
+  .tag {
+    display: inline-block; padding: 3px 9px; border-radius: 6px;
+    font-size: 11px; font-weight: 600;
+  }
+  .tag-green { background: rgba(0,212,170,0.1); color: #34d399; border: 1px solid rgba(0,212,170,0.2); }
+  .tag-amber { background: rgba(245,158,11,0.1); color: #fbbf24; border: 1px solid rgba(245,158,11,0.2); }
+  .tag-purple { background: rgba(139,92,246,0.1); color: #a78bfa; border: 1px solid rgba(139,92,246,0.2); }
+  .tag-blue { background: rgba(59,130,246,0.1); color: #60a5fa; border: 1px solid rgba(59,130,246,0.2); }
+  .val-bold { font-weight: 800; color: #fff; }
+  .val-highlight { font-weight: 800; color: #fbbf24; }
+  .investors { display: flex; flex-wrap: wrap; gap: 4px; max-width: 220px; }
+  .inv { padding: 2px 7px; border-radius: 4px; font-size: 10px; background: rgba(255,255,255,0.04); color: var(--text3); border: 1px solid rgba(255,255,255,0.05); }
+
+  /* Charts row */
+  .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 40px; }
+  .chart-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 22px;
+  }
+  .chart-title { font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 18px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .hbar-list { display: flex; flex-direction: column; gap: 12px; }
+  .hbar-row { display: flex; align-items: center; gap: 10px; }
+  .hbar-label { font-size: 11px; color: var(--text2); width: 90px; text-align: right; flex-shrink: 0; }
+  .hbar-track { flex: 1; height: 20px; background: rgba(255,255,255,0.04); border-radius: 10px; overflow: hidden; }
+  .hbar-fill { height: 100%; border-radius: 10px; display: flex; align-items: center; padding: 0 10px; transition: width 1.2s cubic-bezier(0.4,0,0.2,1); }
+  .hbar-fill span { font-size: 10px; font-weight: 700; color: #fff; white-space: nowrap; }
+  .hbar-fill.green { background: linear-gradient(90deg, #059669, #10b981); }
+  .hbar-fill.amber { background: linear-gradient(90deg, #d97706, #f59e0b); }
+  .hbar-fill.purple { background: linear-gradient(90deg, #7c3aed, #8b5cf6); }
+  .hbar-fill.blue { background: linear-gradient(90deg, #2563eb, #3b82f6); }
+
+  .timeline { display: flex; flex-direction: column; gap: 10px; }
+  .tl-item { display: flex; gap: 12px; align-items: flex-start; }
+  .tl-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+  .tl-content { font-size: 12px; color: var(--text2); line-height: 1.5; }
+  .tl-content strong { color: #fff; }
+
+  /* China Adoption */
+  .china-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 40px; }
+  .china-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 20px;
+    display: flex; align-items: center; gap: 16px;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .china-card:hover { transform: translateY(-2px); }
+  .china-icon { font-size: 28px; flex-shrink: 0; }
+  .china-name { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 3px; }
+  .china-desc { font-size: 11px; color: var(--text2); line-height: 1.5; }
+  .china-stat { margin-left: auto; font-size: 18px; font-weight: 900; color: #fbbf24; flex-shrink: 0; }
+
+  /* MCP Section */
+  .mcp-banner {
+    background: linear-gradient(135deg, rgba(59,130,246,0.07), rgba(139,92,246,0.05));
+    border: 1px solid rgba(59,130,246,0.15);
+    border-radius: 18px; padding: 28px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 40px; flex-wrap: wrap; gap: 20px;
+  }
+  .mcp-left h3 { font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 4px; }
+  .mcp-left p { font-size: 13px; color: var(--text2); }
+  .mcp-right { text-align: right; }
+  .mcp-stat { font-size: 42px; font-weight: 900; color: var(--mcp); line-height: 1; }
+  .mcp-sub { font-size: 12px; color: var(--text3); }
+
+  /* Footer */
+  footer { text-align: center; padding: 30px 0 20px; color: var(--text3); font-size: 11px; line-height: 1.8; }
+
+  @media (max-width: 900px) {
+    .top-banner, .stats-grid { grid-template-columns: 1fr 1fr; }
+    .charts-row { grid-template-columns: 1fr; }
+    .china-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .top-banner, .stats-grid { grid-template-columns: 1fr; }
+  }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  .animate { animation: fadeUp 0.5s ease forwards; opacity: 0; }
+  .d1 { animation-delay: 0.1s; }
+  .d2 { animation-delay: 0.2s; }
+  .d3 { animation-delay: 0.3s; }
+  .d4 { animation-delay: 0.4s; }
+</style>
+</head>
+<body>
+<div class="bg-mesh"></div>
+
+<div class="container">
+  <div class="hero">
+    <div class="hero-eyebrow"><span class="dot"></span>2026 AI Agent Commercialization Year · Live Tracker</div>
+    <h1>AI Agent 元年追踪器</h1>
+    <p class="hero-sub">从Manus天价收购到OpenClaw横扫中国 · 2026商业化全景图谱</p>
+  </div>
+
+  <!-- Top 3 Cards -->
+  <div class="top-banner">
+    <div class="promo-card manus animate d1">
+      <div class="promo-eyebrow">Meta 以 ~$20亿 收购</div>
+      <div class="promo-icon">🤖</div>
+      <div class="promo-name">Manus AI</div>
+      <div class="promo-stat">$1亿 ARR</div>
+      <div class="promo-desc">8个月达成 · 全球最快ARR纪录 · 通用AI Agent</div>
+    </div>
+    <div class="promo-card openclaw animate d2">
+      <div class="promo-eyebrow">开源框架 · 席卷中国</div>
+      <div class="promo-icon">🦞</div>
+      <div class="promo-name">OpenClaw</div>
+      <div class="promo-stat">百度+阿里+腾讯</div>
+      <div class="promo-desc">全面接入 · 中国落地速度远超硅谷</div>
+    </div>
+    <div class="promo-card harvey animate d3">
+      <div class="promo-eyebrow">估值增长最快的法律AI</div>
+      <div class="promo-icon">⚖️</div>
+      <div class="promo-name">Harvey AI</div>
+      <div class="promo-stat">$110亿</div>
+      <div class="promo-desc">1年内估值翻4倍 · GIC+红杉投资</div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-grid">
+    <div class="stat-card animate d1">
+      <div class="stat-label">Manus ARR达成时间</div>
+      <div class="stat-value">8个月</div>
+      <div class="stat-sub">全球最快 $1亿ARR纪录</div>
+    </div>
+    <div class="stat-card animate d2">
+      <div class="stat-label">Manus 收购价</div>
+      <div class="stat-value">~$20亿</div>
+      <div class="stat-sub">Meta 战略收购</div>
+    </div>
+    <div class="stat-card animate d3">
+      <div class="stat-label">Harvey AI 新估值</div>
+      <div class="stat-value">$110亿</div>
+      <div class="stat-sub">1年内从 $30亿→$110亿</div>
+    </div>
+    <div class="stat-card animate d4">
+      <div class="stat-label">MCP 月度SDK下载</div>
+      <div class="stat-value">9700万</div>
+      <div class="stat-sub">Python+TS合计 · 所有主流AI厂商支持</div>
+    </div>
+  </div>
+
+  <!-- China Adoption Grid -->
+  <div class="section-label">🇨🇳 中国科技巨头全面接入 OpenClaw</div>
+  <div class="china-grid">
+    <div class="china-card">
+      <div class="china-icon">🔍</div>
+      <div>
+        <div class="china-name">百度</div>
+        <div class="china-desc">7亿月活搜索App接入OpenClaw<br>日程规划、文件整理、代码撰写</div>
+      </div>
+      <div class="china-stat">7亿<br><span style="font-size:10px;color:var(--text3)">MAU</span></div>
+    </div>
+    <div class="china-card">
+      <div class="china-icon">🛒</div>
+      <div>
+        <div class="china-name">阿里巴巴</div>
+        <div class="china-desc">通义千问 × 淘宝 × 飞猪深度整合<br>春节6天完成1.2亿笔AI代理消费订单</div>
+      </div>
+      <div class="china-stat">1.2亿<br><span style="font-size:10px;color:var(--text3)">笔订单</span></div>
+    </div>
+    <div class="china-card">
+      <div class="china-icon">☁️</div>
+      <div>
+        <div class="china-name">腾讯云 + 阿里云 + 火山引擎</div>
+        <div class="china-desc">三大云厂商率先提供<br>预配置OpenClaw云端服务</div>
+      </div>
+      <div class="china-stat">3家<br><span style="font-size:10px;color:var(--text3)">云厂商</span></div>
+    </div>
+    <div class="china-card">
+      <div class="china-icon">📱</div>
+      <div>
+        <div class="china-name">小米 + ClawMobile</div>
+        <div class="china-desc">小米内测MiclawAgent<br>ClawMobile解决手机端跨App执行难题</div>
+      </div>
+      <div class="china-stat">分层架构<br><span style="font-size:10px;color:var(--text3)">确定性优先</span></div>
+    </div>
+  </div>
+
+  <!-- MCP Banner -->
+  <div class="mcp-banner">
+    <div class="mcp-left">
+      <h3>🤝 Model Context Protocol (MCP)</h3>
+      <p>AI Agent互联互通的事实标准，类似USB在硬件领域的作用</p>
+    </div>
+    <div class="mcp-right">
+      <div class="mcp-stat">97M</div>
+      <div class="mcp-sub">月度SDK下载量（2026年3月）</div>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="charts-row">
+    <div class="chart-card">
+      <div class="chart-title">📊 AI Agent 任务效率提升</div>
+      <div class="hbar-list">
+        <div class="hbar-row">
+          <div class="hbar-label">合同审查</div>
+          <div class="hbar-track"><div class="hbar-fill purple" style="width:0%"><span>+50% 效率</span></div></div>
+        </div>
+        <div class="hbar-row">
+          <div class="hbar-label">SQL查询</div>
+          <div class="hbar-track"><div class="hbar-fill blue" style="width:0%"><span>-95% 耗时</span></div></div>
+        </div>
+        <div class="hbar-row">
+          <div class="hbar-label">员工交互</div>
+          <div class="hbar-track"><div class="hbar-fill green" style="width:0%"><span>-40分钟/次</span></div></div>
+        </div>
+        <div class="hbar-row">
+          <div class="hbar-label">异常发现率</div>
+          <div class="hbar-track"><div class="hbar-fill amber" style="width:0%"><span>80%+ 准确率</span></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">⏱️ 2026 AI Agent 里程碑事件</div>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot" style="background:#00d4aa"></div>
+          <div class="tl-content"><strong style="color:#34d399">Manus</strong> ARR破$1亿，仅用8个月<br><span style="font-size:10px;color:var(--text3)">2025年底</span></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot" style="background:#8b5cf6"></div>
+          <div class="tl-content"><strong style="color:#a78bfa">Meta</strong> 约$20亿收购Manus<br><span style="font-size:10px;color:var(--text3)">2025年底 · 史上最快AI Agent并购</span></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot" style="background:#f59e0b"></div>
+          <div class="tl-content"><strong style="color:#fbbf24">OpenClaw</strong> 横扫中国科技圈<br><span style="font-size:10px;color:var(--text3)">2026年初 · 落地速度远超硅谷</span></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot" style="background:#3b82f6"></div>
+          <div class="tl-content"><strong style="color:#60a5fa">MCP</strong> 9700万月度SDK下载<br><span style="font-size:10px;color:var(--text3)">2026年3月 · 所有主流AI厂商采纳</span></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot" style="background:#8b5cf6"></div>
+          <div class="tl-content"><strong style="color:#a78bfa">Harvey AI</strong> $110亿估值，$2亿E轮<br><span style="font-size:10px;color:var(--text3)">2026 · GIC+红杉领投</span></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot" style="background:#10b981"></div>
+          <div class="tl-content"><strong style="color:#34d399">百度/阿里/腾讯</strong> 全面接入OpenClaw<br><span style="font-size:10px;color:var(--text3)">2026 Q1 · 阿里春节1.2亿笔订单</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Enterprise Cases Table -->
+  <div class="section-label">🏢 企业AI Agent 落地案例（2026）</div>
+  <div class="table-card">
+    <table>
+      <thead>
+        <tr>
+          <th>任务类型</th>
+          <th>AI Agent接管情况</th>
+          <th>效率提升</th>
+          <th>代表案例</th>
+          <th>投资方向</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="tag tag-green">💰 报销流程</span></td>
+          <td style="color:var(--text2)">L5级全自动化 · 零操作</td>
+          <td class="val-highlight">~100%</td>
+          <td style="font-size:12px;color:var(--text2)">合思员工差旅报销</td>
+          <td><div class="investors"><span class="inv">财务SaaS</span></div></td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-purple">📝 会议纪要</span></td>
+          <td style="color:var(--text2)">自动生成+任务追踪</td>
+          <td class="val-highlight">高</td>
+          <td style="font-size:12px;color:var(--text2)">多家企业已规模化部署</td>
+          <td><div class="investors"><span class="inv">企业SaaS</span></div></td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-blue">⚖️ 合同审查</span></td>
+          <td style="color:var(--text2)">效率提升+异常发现率80%+</td>
+          <td class="val-highlight">+50%</td>
+          <td style="font-size:12px;color:var(--text2)">财务Agent · Harvey AI</td>
+          <td><div class="investors"><span class="inv">GIC</span><span class="inv">红杉</span></div></td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-amber">💬 客服工单</span></td>
+          <td style="color:var(--text2)">智能分类+自动回复</td>
+          <td class="val-highlight">高</td>
+          <td style="font-size:12px;color:var(--text2)">金融、电商已规模化</td>
+          <td><div class="investors"><span class="inv">企业AI</span></div></td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-green">🛢️ SQL查询</span></td>
+          <td style="color:var(--text2)">耗时大幅降低</td>
+          <td class="val-highlight">-95%</td>
+          <td style="font-size:12px;color:var(--text2)">Suzano案例</td>
+          <td><div class="investors"><span class="inv">数据分析</span></div></td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-blue">🔒 安全运营</span></td>
+          <td style="color:var(--text2)">威胁检测—响应全流程自动化</td>
+          <td class="val-highlight">46%部署</td>
+          <td style="font-size:12px;color:var(--text2)">46%的已部署企业使用</td>
+          <td><div class="investors"><span class="inv">安全AI</span></div></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Key Insight Banner -->
+  <div style="background:linear-gradient(135deg,rgba(0,212,170,0.06),rgba(139,92,246,0.04));border:1px solid rgba(0,212,170,0.12);border-radius:18px;padding:28px 32px;margin-bottom:40px;">
+    <div style="font-size:15px;font-weight:800;color:#fff;margin-bottom:10px;">💡 2026 AI Agent 核心洞察</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;">
+      <div style="font-size:12px;color:var(--text2);line-height:1.7;">
+        <strong style="color:#34d399">开源降低门槛：</strong>OpenClaw等开源框架正大幅降低AI Agent开发门槛，百度/阿里/腾讯集体接入标志着AI Agent已成行业共识
+      </div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.7;">
+        <strong style="color:#fbbf24">商业化已验证：</strong>Manus 8个月ARR破亿、被Meta以约20亿美元收购，Harvey AI 1年内估值翻4倍——AI Agent商业路径完全打通
+      </div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.7;">
+        <strong style="color:#a78bfa">安全成下一挑战：</strong>工信部警告数据泄露风险，提示词注入攻击风险凸显，安全合规将是企业部署的前置条件
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    数据来源：钜亨网 · 网易科技 · 新浪财经 · Google Cloud · Booz Allen · Yahoo Finance · Reuters<br>
+    AI Agent元年追踪器 2026 · 商业化元年全景图谱 · 仅供研究参考
+  </footer>
+</div>
+
+<script>
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.querySelectorAll('.hbar-fill').forEach(bar => {
+      const text = bar.querySelector('span').textContent;
+      let w = 60;
+      if (text.includes('50%')) w = 75;
+      if (text.includes('95%')) w = 90;
+      if (text.includes('40')) w = 65;
+      if (text.includes('80')) w = 85;
+      bar.style.width = w + '%';
+    });
+  }, 400);
+});
+</script>
+</body>
+</html>

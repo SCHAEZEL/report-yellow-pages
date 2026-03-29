@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>中国新能源出海大航海 2026</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700;800;900&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #04050a;
+    --bg2: #080d18;
+    --bg3: #0d1425;
+    --green: #10b981;
+    --green-dim: rgba(16,185,129,0.15);
+    --amber: #f59e0b;
+    --amber-dim: rgba(245,158,11,0.15);
+    --red: #ef4444;
+    --red-dim: rgba(239,68,68,0.15);
+    --blue: #3b82f6;
+    --text: #e8eaf0;
+    --text2: #8891a8;
+    --text3: #44485a;
+    --border: rgba(255,255,255,0.06);
+    --card: rgba(255,255,255,0.02);
+  }
+  body {
+    font-family: 'Noto Sans SC', -apple-system, sans-serif;
+    background: var(--bg); color: var(--text);
+    min-height: 100vh; overflow-x: hidden;
+  }
+  .bg-geom {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background: 
+      radial-gradient(ellipse at 20% 10%, rgba(16,185,129,0.04) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 90%, rgba(245,158,11,0.03) 0%, transparent 50%);
+  }
+  .container { position: relative; z-index: 1; max-width: 1300px; margin: 0 auto; padding: 0 24px 80px; }
+
+  header { text-align: center; padding: 48px 24px 32px; }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.15);
+    border-radius: 100px; padding: 5px 14px; font-size: 11px; font-weight: 600;
+    color: #34d399; margin-bottom: 14px;
+  }
+  .eyebrow .dot { width: 6px; height: 6px; background: #10b981; border-radius: 50%; animation: blink 1.5s infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+  h1 {
+    font-size: clamp(26px, 5vw, 50px); font-weight: 900; letter-spacing: -1.5px;
+    background: linear-gradient(135deg, #fff 20%, #10b981 70%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  .subtitle { color: var(--text2); font-size: 14px; }
+
+  /* Hero stats */
+  .hero-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 36px;
+  }
+  .hero-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 22px 20px;
+    position: relative; overflow: hidden;
+    transition: transform 0.25s, border-color 0.25s;
+  }
+  .hero-card:hover { transform: translateY(-3px); }
+  .hero-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
+  .hero-card.green::before { background: linear-gradient(90deg, var(--green), transparent); }
+  .hero-card.amber::before { background: linear-gradient(90deg, var(--amber), transparent); }
+  .hero-card.red::before { background: linear-gradient(90deg, var(--red), transparent); }
+  .hero-card.blue::before { background: linear-gradient(90deg, var(--blue), transparent); }
+  .hc-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text3); margin-bottom: 6px; }
+  .hc-value { font-size: 28px; font-weight: 900; color: #fff; line-height: 1.1; margin-bottom: 4px; }
+  .hc-sub { font-size: 11px; color: var(--text2); }
+
+  /* Section */
+  .slabel { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text3); margin-bottom: 14px; display: flex; align-items: center; gap: 10px; }
+  .slabel::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  /* Export Chart */
+  .chart-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; margin-bottom: 36px; }
+  .chart-title { font-size: 13px; font-weight: 600; color: var(--text2); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .bar-chart { display: flex; align-items: flex-end; gap: 12px; height: 200px; }
+  .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .bar-fill {
+    width: 100%; border-radius: 8px 8px 0 0;
+    display: flex; align-items: flex-end; justify-content: center;
+    padding-bottom: 4px; font-size: 11px; font-weight: 700; color: #fff;
+    transition: height 1s cubic-bezier(0.4,0,0.2,1);
+    min-height: 4px;
+  }
+  .bar-label { font-size: 10px; color: var(--text3); text-align: center; }
+  .bar-val { font-size: 10px; color: var(--text2); text-align: center; }
+  .bar-2026 { border: 2px dashed rgba(16,185,129,0.4); }
+
+  /* Table */
+  .table-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; margin-bottom: 36px; }
+  table { width: 100%; border-collapse: collapse; }
+  thead th { padding: 12px 18px; text-align: left; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text3); border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.015); }
+  tbody td { padding: 14px 18px; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.03); vertical-align: middle; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: rgba(16,185,129,0.03); }
+  .tag { display: inline-block; padding: 3px 9px; border-radius: 6px; font-size: 11px; font-weight: 600; }
+  .tag-green { background: rgba(16,185,129,0.12); color: #34d399; }
+  .tag-amber { background: rgba(245,158,11,0.12); color: #fbbf24; }
+  .tag-red { background: rgba(239,68,68,0.12); color: #f87171; }
+  .tag-blue { background: rgba(59,130,246,0.12); color: #60a5fa; }
+  .tag-purple { background: rgba(139,92,246,0.12); color: #a78bfa; }
+  .val-bold { font-weight: 800; color: #fff; }
+  .target-cell { display: flex; align-items: center; gap: 8px; }
+  .target-bar { height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; flex: 1; max-width: 120px; overflow: hidden; }
+  .target-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, #059669, #10b981); }
+
+  /* Grid for barriers & companies */
+  .split-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 36px; }
+  .split-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 22px; }
+  .split-card h3 { font-size: 13px; font-weight: 700; color: var(--text2); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  .barrier-item { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.03); align-items: flex-start; }
+  .barrier-item:last-child { border-bottom: none; }
+  .barrier-icon { font-size: 18px; flex-shrink: 0; }
+  .barrier-text { flex: 1; }
+  .barrier-name { font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 2px; }
+  .barrier-desc { font-size: 11px; color: var(--text2); line-height: 1.5; }
+
+  .company-item { padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
+  .company-item:last-child { border-bottom: none; }
+  .company-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+  .company-name { font-size: 14px; font-weight: 700; color: #fff; }
+  .company-target { font-size: 16px; font-weight: 800; color: #10b981; }
+  .company-growth { font-size: 11px; color: #34d399; margin-top: 2px; }
+  .company-bar { height: 4px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; margin-top: 6px; }
+  .company-bar-fill { height: 100%; border-radius: 2px; background: linear-gradient(90deg, #059669, #10b981); }
+
+  /* Tariff Banner */
+  .tariff-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 36px; }
+  .tariff-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 20px; text-align: center; }
+  .tariff-region { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+  .tariff-rate { font-size: 36px; font-weight: 900; line-height: 1; margin-bottom: 4px; }
+  .tariff-red { color: #f87171; }
+  .tariff-amber { color: #fbbf24; }
+  .tariff-desc { font-size: 11px; color: var(--text3); }
+
+  /* Battery chart */
+  .battery-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 36px; }
+  .hbar-list { display: flex; flex-direction: column; gap: 12px; }
+  .hbar-row { display: flex; align-items: center; gap: 10px; }
+  .hbar-label { font-size: 11px; color: var(--text2); width: 90px; text-align: right; flex-shrink: 0; }
+  .hbar-track { flex: 1; height: 20px; background: rgba(255,255,255,0.04); border-radius: 10px; overflow: hidden; }
+  .hbar-fill { height: 100%; border-radius: 10px; display: flex; align-items: center; padding: 0 10px; transition: width 1.2s cubic-bezier(0.4,0,0.2,1); }
+  .hbar-fill span { font-size: 10px; font-weight: 700; color: #fff; }
+  .hbar-fill.green { background: linear-gradient(90deg, #059669, #10b981); }
+  .hbar-fill.amber { background: linear-gradient(90deg, #d97706, #f59e0b); }
+  .hbar-fill.blue { background: linear-gradient(90deg, #2563eb, #3b82f6); }
+
+  /* Quote */
+  .quote-banner {
+    background: linear-gradient(135deg, rgba(16,185,129,0.05), rgba(59,130,246,0.04));
+    border: 1px solid rgba(16,185,129,0.12);
+    border-radius: 18px; padding: 28px 32px; margin-bottom: 36px;
+  }
+  .quote-text { font-size: 16px; font-weight: 700; color: #fff; line-height: 1.6; margin-bottom: 8px; }
+  .quote-sub { font-size: 12px; color: var(--text2); }
+
+  footer { text-align: center; padding: 30px 0 20px; color: var(--text3); font-size: 11px; line-height: 1.8; }
+
+  @media (max-width: 900px) {
+    .hero-grid, .tariff-grid { grid-template-columns: repeat(2, 1fr); }
+    .split-grid, .battery-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .hero-grid { grid-template-columns: 1fr; }
+  }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .a { animation: fadeUp 0.5s ease forwards; opacity: 0; }
+  .d1 { animation-delay: 0.1s; }
+  .d2 { animation-delay: 0.2s; }
+  .d3 { animation-delay: 0.3s; }
+  .d4 { animation-delay: 0.4s; }
+</style>
+</head>
+<body>
+<div class="bg-geom"></div>
+
+<div class="container">
+  <header>
+    <div class="eyebrow"><span class="dot"></span>2026年3月 · 实时追踪</div>
+    <h1>中国新能源出海大航海</h1>
+    <p class="subtitle">整车 · 储能 · 光伏 · 全球扩张与壁垒博弈</p>
+  </header>
+
+  <!-- Hero Stats -->
+  <div class="hero-grid">
+    <div class="hero-card green a d1">
+      <div class="hc-label">2026年1-2月汽车出口</div>
+      <div class="hc-value">135.2万</div>
+      <div class="hc-sub">同比+48.4% · 2月单月+52.4%</div>
+    </div>
+    <div class="hero-card amber a d2">
+      <div class="hc-label">新能源汽车出口（1-2月）</div>
+      <div class="hc-value">58.3万</div>
+      <div class="hc-sub">同比+110% · 占总量超40%</div>
+    </div>
+    <div class="hero-card blue a d3">
+      <div class="hc-label">2026海外产能目标</div>
+      <div class="hc-value">200万+</div>
+      <div class="hc-sub">2026年年底 · 本地化工厂</div>
+    </div>
+    <div class="hero-card red a d4">
+      <div class="hc-label">2025"新三样"出口</div>
+      <div class="hc-value">¥1.3万亿</div>
+      <div class="hc-sub">同比+27.1% · 5年增长3.5倍</div>
+    </div>
+  </div>
+
+  <!-- Export Growth Chart -->
+  <div class="slabel">📈 出口增长轨迹（万辆）</div>
+  <div class="chart-card">
+    <div class="chart-title">中国新能源汽车出口量 · 2020-2026E</div>
+    <div class="bar-chart" id="exportChart">
+      <div class="bar-col">
+        <div class="bar-val">22.3</div>
+        <div class="bar-fill" style="background:linear-gradient(180deg,#059669,#10b981);height:0%"><span></span></div>
+        <div class="bar-label">2020</div>
+      </div>
+      <div class="bar-col">
+        <div class="bar-val">31.1</div>
+        <div class="bar-fill" style="background:linear-gradient(180deg,#059669,#10b981);height:0%"><span></span></div>
+        <div class="bar-label">2021</div>
+      </div>
+      <div class="bar-col">
+        <div class="bar-val">67.6</div>
+        <div class="bar-fill" style="background:linear-gradient(180deg,#059669,#10b981);height:0%"><span></span></div>
+        <div class="bar-label">2022</div>
+      </div>
+      <div class="bar-col">
+        <div class="bar-val">120.3</div>
+        <div class="bar-fill" style="background:linear-gradient(180deg,#059669,#10b981);height:0%"><span></span></div>
+        <div class="bar-label">2023</div>
+      </div>
+      <div class="bar-col">
+        <div class="bar-val">181.5</div>
+        <div class="bar-fill" style="background:linear-gradient(180deg,#059669,#10b981);height:0%"><span></span></div>
+        <div class="bar-label">2024</div>
+      </div>
+      <div class="bar-col">
+        <div class="bar-val">261.5</div>
+        <div class="bar-fill" style="background:linear-gradient(180deg,#059669,#10b981);height:0%"><span></span></div>
+        <div class="bar-label">2025</div>
+      </div>
+      <div class="bar-col">
+        <div class="bar-val">400+</div>
+        <div class="bar-fill bar-2026" style="background:linear-gradient(180deg,#10b981,#34d399);height:0%"><span style="color:#34d399">E</span></div>
+        <div class="bar-label">2026E</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;margin-top:12px;font-size:11px;color:var(--text3);">
+      <div style="width:16px;height:8px;background:linear-gradient(90deg,#059669,#10b981);border-radius:2px;"></div>
+      实际数据
+      <div style="width:16px;height:8px;background:linear-gradient(90deg,#10b981,#34d399);border-radius:2px;border:1px dashed rgba(16,185,129,0.4);margin-left:8px;"></div>
+      2026预测
+    </div>
+  </div>
+
+  <!-- Tariff Barriers -->
+  <div class="slabel">🚧 全球主要贸易壁垒</div>
+  <div class="tariff-grid">
+    <div class="tariff-card">
+      <div class="tariff-region">🇺🇸 美国</div>
+      <div class="tariff-rate tariff-red">100%</div>
+      <div class="tariff-desc">对华电动汽车关税<br>实质封锁美国市场</div>
+    </div>
+    <div class="tariff-card">
+      <div class="tariff-region">🇪🇺 欧盟</div>
+      <div class="tariff-rate tariff-amber">反补贴税</div>
+      <div class="tariff-desc">2024年10月31日起<br>征收为期5年最终反补贴税</div>
+    </div>
+    <div class="tariff-card">
+      <div class="tariff-region">🇪🇺 欧盟（高空作业平台）</div>
+      <div class="tariff-rate tariff-red">最高 66.7%</div>
+      <div class="tariff-desc">反倾销+反补贴终裁<br>鼎力税率20%·星邦49%</div>
+    </div>
+  </div>
+
+  <!-- Company Targets -->
+  <div class="slabel">🏭 头部车企海外工厂布局（2026年）</div>
+  <div class="split-grid">
+    <div class="split-card">
+      <h3>🏗️ 海外工厂产能</h3>
+      <div class="company-item">
+        <div class="company-header">
+          <div class="company-name">比亚迪 · 匈牙利</div>
+          <div class="company-target">30万辆</div>
+        </div>
+        <div class="company-growth">2026年Q2投产 · 远期规划</div>
+        <div class="company-bar"><div class="company-bar-fill" style="width:100%"></div></div>
+      </div>
+      <div class="company-item">
+        <div class="company-header">
+          <div class="company-name">长城汽车 · 巴西</div>
+          <div class="company-target">30万辆</div>
+        </div>
+        <div class="company-growth">第二工厂+合并后总产能</div>
+        <div class="company-bar"><div class="company-bar-fill" style="width:100%"></div></div>
+      </div>
+      <div class="company-item">
+        <div class="company-header">
+          <div class="company-name">奇瑞 · 越南等多地</div>
+          <div class="company-target">多个基地</div>
+        </div>
+        <div class="company-growth">2026年正式投产</div>
+        <div class="company-bar"><div class="company-bar-fill" style="width:60%"></div></div>
+      </div>
+      <div class="company-item">
+        <div class="company-header">
+          <div class="company-name">印尼/墨西哥</div>
+          <div class="company-target">持续布局</div>
+        </div>
+        <div class="company-growth">比亚迪等持续扩产</div>
+        <div class="company-bar"><div class="company-bar-fill" style="width:50%"></div></div>
+      </div>
+      <div style="margin-top:12px;padding:10px;background:rgba(16,185,129,0.06);border-radius:8px;border:1px solid rgba(16,185,129,0.1);">
+        <div style="font-size:18px;font-weight:900;color:#10b981;">200万辆+</div>
+        <div style="font-size:11px;color:var(--text2);">2026年年底海外总产能目标</div>
+      </div>
+    </div>
+    <div class="split-card">
+      <h3>🎯 2026年海外销量目标</h3>
+      <div class="company-item">
+        <div class="company-header">
+          <div class="company-name">上汽集团</div>
+          <div class="company-target">150万辆</div>
+        </div>
+        <div class="company-growth">2025年107.1万辆 → +40%</div>
+        <div class="company-bar"><div class="company-bar-fill" style="width:100%"></div></div>
+      </div>
+      <div class="company-item">
+        <div class="company-header">
+          <div class="company-name">比亚迪</div>
+          <div class="company-target">130万辆</div>
+        </div>
+        <div class="company-growth">2025年105万辆 → +24.3%</div>
+        <div class="company-bar"><div class="company-bar-fill" style="width:87%"></div></div>
+      </div>
+      <div class="company-item">
+        <div class="company-header">
+          <div class="company-name">长安汽车</div>
+          <div class="company-target">75万辆</div>
+        </div>
+        <div class="company-growth">同比+17.7% · 占总销量23%</div>
+        <div class="company-bar"><div class="company-bar-fill" style="width:50%"></div></div>
+      </div>
+      <div class="company-item">
+        <div class="company-header">
+          <div class="company-name">吉利汽车</div>
+          <div class="company-target">64万辆</div>
+        </div>
+        <div class="company-growth">同比+50%+ · 最大增速</div>
+        <div class="company-bar"><div class="company-bar-fill" style="width:43%"></div></div>
+      </div>
+      <div class="company-item">
+        <div class="company-header">
+          <div class="company-name">零跑汽车</div>
+          <div class="company-target">10万辆+</div>
+        </div>
+        <div class="company-growth">新势力出海最强者</div>
+        <div class="company-bar"><div class="company-bar-fill" style="width:7%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Battery & Tech -->
+  <div class="battery-grid">
+    <div class="chart-card">
+      <div class="chart-title">🔋 全球动力电池市场结构（2025）</div>
+      <div class="hbar-list" style="margin-top:8px;">
+        <div class="hbar-row">
+          <div class="hbar-label">新能源汽车</div>
+          <div class="hbar-track"><div class="hbar-fill green" style="width:0%"><span>66.2% · 增速42.2%</span></div></div>
+        </div>
+        <div class="hbar-row">
+          <div class="hbar-label">储能</div>
+          <div class="hbar-track"><div class="hbar-fill amber" style="width:0%"><span>27.1% · 增速90.1%</span></div></div>
+        </div>
+        <div class="hbar-row">
+          <div class="hbar-label">消费电子</div>
+          <div class="hbar-track"><div class="hbar-fill blue" style="width:0%"><span>6.6%</span></div></div>
+        </div>
+      </div>
+      <div style="margin-top:16px;padding:10px;background:rgba(16,185,129,0.06);border-radius:8px;border:1px solid rgba(16,185,129,0.1);">
+        <div style="font-size:18px;font-weight:900;color:#10b981;">2257 GWh</div>
+        <div style="font-size:11px;color:var(--text2);">2025年全球市场规模 · 中国主导</div>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">📊 中国全球份额</div>
+      <div class="hbar-list" style="margin-top:8px;">
+        <div class="hbar-row">
+          <div class="hbar-label">光伏组件</div>
+          <div class="hbar-track"><div class="hbar-fill green" style="width:0%"><span>80%+ 全球份额</span></div></div>
+        </div>
+        <div class="hbar-row">
+          <div class="hbar-label">锂电池</div>
+          <div class="hbar-track"><div class="hbar-fill amber" style="width:0%"><span>70%+ 全球份额</span></div></div>
+        </div>
+        <div class="hbar-row">
+          <div class="hbar-label">电动汽车</div>
+          <div class="hbar-track"><div class="hbar-fill blue" style="width:0%"><span>连续全球第一</span></div></div>
+        </div>
+      </div>
+      <div style="margin-top:16px;padding:10px;background:rgba(59,130,246,0.06);border-radius:8px;border:1px solid rgba(59,130,246,0.1);">
+        <div style="font-size:18px;font-weight:900;color:#60a5fa;">宁德时代+比亚迪</div>
+        <div style="font-size:11px;color:var(--text2);">全球动力电池双雄领跑</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Local Procurement Targets -->
+  <div class="slabel">🔗 供应链本地化目标（2026年）</div>
+  <div class="table-card">
+    <table>
+      <thead>
+        <tr>
+          <th>车企</th>
+          <th>市场</th>
+          <th>本地采购率目标</th>
+          <th>策略重点</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="tag tag-green">比亚迪</span></td>
+          <td>欧洲（匈牙利）</td>
+          <td class="val-bold">50%</td>
+          <td>规避欧盟关税·本地供应链</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-green">比亚迪</span></td>
+          <td>南美（巴西）</td>
+          <td class="val-bold">50%</td>
+          <td>2026年年底前达成</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-amber">长安汽车</span></td>
+          <td>东南亚（泰国）</td>
+          <td class="val-bold" style="color:#fbbf24;">90%</td>
+          <td>最高目标·高度本地化</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-amber">长安汽车</span></td>
+          <td>东南亚（越南）</td>
+          <td class="val-bold" style="color:#fbbf24;">80%</td>
+          <td>2026年目标</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-blue">吉利/奇瑞</span></td>
+          <td>东南亚/拉美</td>
+          <td class="val-bold">50%+</td>
+          <td>综合布局</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Quote -->
+  <div class="quote-banner">
+    <div class="quote-text">"中国新能源出海的终极目标，从来不是单向的市场征服，<br>而是深度融入全球市场，成为全球汽车产业变革的参与者与引领者。"</div>
+    <div class="quote-sub">投中网 · 21经济网 · 2026年3月</div>
+  </div>
+
+  <footer>
+    数据来源：中国汽车工业协会 · 投中网 · 21经济网 · 人民日报 · 人民网 · 贸企通 · 毕马威 · 华经产业研究院 · 东吴证券<br>
+    中国新能源出海大航海追踪器 · 2026年3月版 · 仅供研究参考
+  </footer>
+</div>
+
+<script>
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    // Export chart bars (height proportional to values, max ~261.5)
+    const bars = document.querySelectorAll('.bar-fill');
+    const maxVal = 400;
+    const values = [22.3, 31.1, 67.6, 120.3, 181.5, 261.5, 400];
+    bars.forEach((bar, i) => {
+      const pct = (values[i] / maxVal) * 100;
+      bar.style.height = pct + '%';
+    });
+
+    // HBar charts
+    const hb1 = document.querySelectorAll('.hbar-fill.green');
+    if (hb1[0]) { setTimeout(() => { hb1[0].style.width = '66.2%'; }, 100); }
+    if (hb1[1]) { setTimeout(() => { hb1[1].style.width = '40.7%'; }, 200); }
+    if (hb1[2]) { setTimeout(() => { hb1[2].style.width = '80%'; }, 300); }
+
+    const hb2 = document.querySelectorAll('.hbar-fill.amber');
+    if (hb2[0]) { setTimeout(() => { hb2[0].style.width = '87.5%'; }, 100); }
+    if (hb2[1]) { setTimeout(() => { hb2[1].style.width = '87.5%'; }, 200); }
+
+    const hb3 = document.querySelectorAll('.hbar-fill.blue');
+    if (hb3[0]) { setTimeout(() => { hb3[0].style.width = '100%'; }, 100); }
+    if (hb3[1]) { setTimeout(() => { hb3[1].style.width = '100%'; }, 200); }
+  }, 300);
+});
+</script>
+</body>
+</html>

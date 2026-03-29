@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Unicorn Tracker 2026 Q1</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #111119;
+    --bg3: #181824;
+    --accent: #6366f1;
+    --accent2: #8b5cf6;
+    --accent-glow: rgba(99,102,241,0.3);
+    --green: #10b981;
+    --green-glow: rgba(16,185,129,0.2);
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --text3: #64748b;
+    --border: rgba(255,255,255,0.06);
+    --card: rgba(255,255,255,0.03);
+  }
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  .bg-grid {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background-image: 
+      linear-gradient(rgba(99,102,241,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(99,102,241,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+  .bg-glow {
+    position: fixed; top: -200px; left: 50%; transform: translateX(-50%);
+    width: 800px; height: 600px;
+    background: radial-gradient(ellipse, rgba(99,102,241,0.12) 0%, transparent 70%);
+    pointer-events: none; z-index: 0;
+  }
+  .container { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; padding: 0 24px 80px; }
+
+  /* Header */
+  header {
+    padding: 40px 0 0;
+    text-align: center;
+    margin-bottom: 48px;
+  }
+  .badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.2);
+    border-radius: 100px; padding: 6px 16px; font-size: 12px; font-weight: 500;
+    color: var(--accent); margin-bottom: 16px; letter-spacing: 0.5px;
+  }
+  .badge .dot {
+    width: 6px; height: 6px; background: var(--green); border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  h1 {
+    font-size: clamp(28px, 5vw, 48px); font-weight: 800; letter-spacing: -1.5px;
+    background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 12px;
+  }
+  .subtitle { color: var(--text2); font-size: 15px; }
+
+  /* Stats row */
+  .stats-row {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 40px;
+  }
+  .stat-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+    padding: 24px; position: relative; overflow: hidden;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .stat-card:hover { transform: translateY(-2px); border-color: rgba(99,102,241,0.3); }
+  .stat-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(99,102,241,0.5), transparent);
+  }
+  .stat-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text3); margin-bottom: 8px; }
+  .stat-value { font-size: 28px; font-weight: 800; color: #fff; margin-bottom: 4px; }
+  .stat-sub { font-size: 12px; color: var(--text3); }
+  .stat-icon {
+    position: absolute; top: 20px; right: 20px;
+    width: 36px; height: 36px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; opacity: 0.6;
+  }
+
+  /* Charts row */
+  .charts-row {
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 40px;
+  }
+  .chart-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+    padding: 24px;
+  }
+  .chart-title { font-size: 13px; font-weight: 600; color: var(--text2); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .bar-chart { display: flex; flex-direction: column; gap: 10px; }
+  .bar-row { display: flex; align-items: center; gap: 10px; }
+  .bar-label { font-size: 12px; color: var(--text2); width: 80px; flex-shrink: 0; text-align: right; }
+  .bar-track { flex: 1; height: 20px; background: rgba(255,255,255,0.04); border-radius: 10px; overflow: hidden; position: relative; }
+  .bar-fill {
+    height: 100%; border-radius: 10px; transition: width 1s cubic-bezier(0.4,0,0.2,1);
+    display: flex; align-items: center; padding-left: 8px;
+  }
+  .bar-fill span { font-size: 10px; font-weight: 700; color: #fff; white-space: nowrap; }
+  .pie-wrap { display: flex; align-items: center; gap: 24px; }
+  .pie-svg { flex-shrink: 0; }
+  .pie-legend { display: flex; flex-direction: column; gap: 8px; }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text2); }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .timeline { display: flex; flex-direction: column; gap: 12px; }
+  .tl-item { display: flex; gap: 12px; align-items: flex-start; }
+  .tl-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+  .tl-content { font-size: 12px; line-height: 1.5; }
+  .tl-content strong { color: #fff; }
+  .tl-date { color: var(--text3); font-size: 11px; }
+
+  /* Filters */
+  .filters { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+  .filter-btn {
+    padding: 7px 16px; border-radius: 100px; border: 1px solid var(--border);
+    background: var(--card); color: var(--text2); font-size: 12px; font-weight: 500;
+    cursor: pointer; transition: all 0.2s; font-family: inherit;
+  }
+  .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .filter-btn.active {
+    background: rgba(99,102,241,0.15); border-color: rgba(99,102,241,0.4);
+    color: var(--accent);
+  }
+  .search-box {
+    margin-left: auto; position: relative;
+  }
+  .search-box input {
+    background: var(--card); border: 1px solid var(--border); border-radius: 100px;
+    padding: 7px 16px 7px 36px; font-size: 13px; color: var(--text);
+    font-family: inherit; outline: none; width: 220px; transition: border-color 0.2s;
+  }
+  .search-box input::placeholder { color: var(--text3); }
+  .search-box input:focus { border-color: var(--accent); }
+  .search-box::before {
+    content: '🔍'; position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+    font-size: 12px; opacity: 0.5;
+  }
+
+  /* Table */
+  .table-wrap {
+    background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+    overflow: hidden;
+  }
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    padding: 14px 20px; text-align: left; font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.8px; color: var(--text3);
+    border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.02);
+    cursor: pointer; user-select: none; white-space: nowrap;
+    transition: color 0.2s;
+  }
+  thead th:hover { color: var(--text2); }
+  thead th .sort-icon { margin-left: 4px; opacity: 0.4; font-size: 10px; }
+  thead th.sort-asc .sort-icon, thead th.sort-desc .sort-icon { opacity: 1; color: var(--accent); }
+  tbody tr { transition: background 0.15s; }
+  tbody tr:hover { background: rgba(99,102,241,0.05); }
+  tbody td {
+    padding: 16px 20px; font-size: 13px; border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  .company-cell { display: flex; align-items: center; gap: 12px; }
+  .company-avatar {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; color: #fff; flex-shrink: 0;
+    letter-spacing: -0.5px;
+  }
+  .company-name { font-weight: 600; color: #fff; }
+  .company-tag { font-size: 11px; color: var(--text3); }
+  .tag {
+    display: inline-block; padding: 3px 10px; border-radius: 100px;
+    font-size: 11px; font-weight: 500;
+  }
+  .tag-chip { background: rgba(99,102,241,0.15); color: #818cf8; border: 1px solid rgba(99,102,241,0.2); }
+  .tag-infra { background: rgba(16,185,129,0.12); color: #34d399; border: 1px solid rgba(16,185,129,0.2); }
+  .tag-app { background: rgba(245,158,11,0.12); color: #fbbf24; border: 1px solid rgba(245,158,11,0.2); }
+  .tag-physical { background: rgba(236,72,153,0.12); color: #f472b6; border: 1px solid rgba(236,72,153,0.2); }
+  .tag-model { background: rgba(14,165,233,0.12); color: #38bdf8; border: 1px solid rgba(14,165,233,0.2); }
+  .val-cell { font-weight: 700; color: #fff; font-variant-numeric: tabular-nums; }
+  .val-cell.high { color: #fbbf24; }
+  .flag { font-size: 16px; margin-right: 6px; }
+  .round-badge {
+    display: inline-block; padding: 3px 10px; border-radius: 6px;
+    font-size: 11px; font-weight: 600;
+    background: rgba(99,102,241,0.1); color: #818cf8;
+  }
+  .investors { display: flex; flex-wrap: wrap; gap: 4px; max-width: 200px; }
+  .inv-tag {
+    padding: 2px 8px; border-radius: 4px; font-size: 10px;
+    background: rgba(255,255,255,0.04); color: var(--text3);
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .paginator {
+    display: flex; justify-content: spacepx; align-items: center;
+    padding: 16px 20px; gap: 8px;
+  }
+  .page-btn {
+    width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border);
+    background: transparent; color: var(--text2); font-size: 13px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s; font-family: inherit;
+  }
+  .page-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .page-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .page-info { margin-left: auto; font-size: 12px; color: var(--text3); }
+
+  .section-label {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 1px;
+    color: var(--text3); margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+  }
+  .section-label::after {
+    content: ''; flex: 1; height: 1px; background: var(--border);
+  }
+
+  footer {
+    text-align: center; padding: 40px 0 20px; color: var(--text3); font-size: 12px;
+  }
+
+  /* Animations */
+  @keyframes countUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .animate-in { animation: countUp 0.5s ease forwards; }
+  .delay-1 { animation-delay: 0.1s; opacity: 0; }
+  .delay-2 { animation-delay: 0.2s; opacity: 0; }
+  .delay-3 { animation-delay: 0.3s; opacity: 0; }
+  .delay-4 { animation-delay: 0.4s; opacity: 0; }
+
+  @media (max-width: 900px) {
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+    .charts-row { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .stats-row { grid-template-columns: 1fr; }
+    .search-box { margin-left: 0; width: 100%; }
+    .search-box input { width: 100%; }
+  }
+
+  /* Tooltip */
+  .tooltip {
+    position: relative; cursor: help;
+  }
+  .tooltip::after {
+    content: attr(data-tip); position: absolute; bottom: calc(100% + 8px);
+    left: 50%; transform: translateX(-50%);
+    background: #1e1e2e; border: 1px solid rgba(255,255,255,0.1);
+    padding: 6px 12px; border-radius: 8px; font-size: 11px; color: var(--text2);
+    white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.2s;
+    z-index: 100;
+  }
+  .tooltip:hover::after { opacity: 1; }
+
+  .china-row { background: rgba(239,68,68,0.03); }
+  .china-row:hover { background: rgba(239,68,68,0.08) !important; }
+</style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="bg-glow"></div>
+
+<div class="container">
+  <header>
+    <div class="badge"><span class="dot"></span>Live · Q1 2026 Data Updated</div>
+    <h1>Global AI Unicorn Tracker</h1>
+    <p class="subtitle">2026年Q1全球AI独角兽全景图谱 · 实时追踪</p>
+  </header>
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-card animate-in delay-1">
+      <div class="stat-label">Total Unicorns Tracked</div>
+      <div class="stat-value" id="stat-total">24</div>
+      <div class="stat-sub">2026年1月新增 9 家</div>
+    </div>
+    <div class="stat-card animate-in delay-2">
+      <div class="stat-label">Total Unicorn Valuations</div>
+      <div class="stat-value">$2.2T</div>
+      <div class="stat-sub">约合 15.8 万亿人民币</div>
+    </div>
+    <div class="stat-card animate-in delay-3">
+      <div class="stat-label">NVIDIA Q1 AI Investment</div>
+      <div class="stat-value">$600B</div>
+      <div class="stat-sub">英伟达密集出手 9 家企业</div>
+    </div>
+    <div class="stat-card animate-in delay-4">
+      <div class="stat-label">China AI Investment 2026</div>
+      <div class="stat-value">¥8900亿</div>
+      <div class="stat-sub">同比增长 +18% YoY</div>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="charts-row">
+    <div class="chart-card">
+      <div class="chart-title">📊 Unicorn by Category</div>
+      <div class="bar-chart" id="catChart">
+        <div class="bar-row">
+          <div class="bar-label">AI Chip</div>
+          <div class="bar-track"><div class="bar-fill" style="width:0%;background:linear-gradient(90deg,#6366f1,#8b5cf6)"><span>3</span></div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Infra</div>
+          <div class="bar-track"><div class="bar-fill" style="width:0%;background:linear-gradient(90deg,#10b981,#059669)"><span>5</span></div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Model</div>
+          <div class="bar-track"><div class="bar-fill" style="width:0%;background:linear-gradient(90deg,#38bdf8,#0ea5e9)"><span>3</span></div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">App</div>
+          <div class="bar-track"><div class="bar-fill" style="width:0%;background:linear-gradient(90deg,#fbbf24,#f59e0b)"><span>2</span></div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Physical</div>
+          <div class="bar-track"><div class="bar-fill" style="width:0%;background:linear-gradient(90deg,#f472b6,#ec4899)"><span>2</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-title">🌍 Unicorn by Country</div>
+      <div class="pie-wrap">
+        <svg class="pie-svg" width="130" height="130" viewBox="0 0 130 130">
+          <circle cx="65" cy="65" r="50" fill="none" stroke="#1e1e2e" stroke-width="20"/>
+          <!-- US ~85%, Canada ~11%, China ~4% -->
+          <circle cx="65" cy="65" r="50" fill="none" stroke="#6366f1" stroke-width="20"
+            stroke-dasharray="267 47" stroke-dashoffset="0" transform="rotate(-90 65 65)"/>
+          <circle cx="65" cy="65" r="50" fill="none" stroke="#f472b6" stroke-width="20"
+            stroke-dasharray="35 279" stroke-dashoffset="-267" transform="rotate(-90 65 65)"/>
+          <circle cx="65" cy="65" r="50" fill="none" stroke="#10b981" stroke-width="20"
+            stroke-dasharray="12 302" stroke-dashoffset="-302" transform="rotate(-90 65 65)"/>
+        </svg>
+        <div class="pie-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:#6366f1"></div>USA · 8 (89%)</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#f472b6"></div>Canada · 1 (11%)</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#10b981"></div>China · 0 (0%)</div>
+        </div>
+      </div>
+      <div style="margin-top:16px;font-size:11px;color:var(--text3);">
+        注：2026年1月新增9家AI独角兽中，8家来自美国，1家来自加拿大，无中国
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-title">⏱️ Major Funding Timeline Q1 2026</div>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot" style="background:#6366f1"></div>
+          <div class="tl-content">
+            <strong style="color:#fbbf24">OpenAI</strong> 融资$1100亿，估值$7300亿<br>
+            <span class="tl-date">2026-02-27 · 英伟达+软银各$300亿</span>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot" style="background:#8b5cf6"></div>
+          <div class="tl-content">
+            <strong style="color:#818cf8">Anthropic</strong> 融资$300亿，估值$3800亿<br>
+            <span class="tl-date">2026-02-13 · Claude年化收入$140亿</span>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot" style="background:#10b981"></div>
+          <div class="tl-content">
+            <strong style="color:#34d399">xAI</strong> 融资$200亿，建全球最大GPU集群<br>
+            <span class="tl-date">2026-01-06 · 英伟达+思科战略投资</span>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot" style="background:#38bdf8"></div>
+          <div class="tl-content">
+            <strong style="color:#7dd3fc">Kimi</strong> 估值破$100亿，3个月完成3轮融资<br>
+            <span class="tl-date">2026 Q1 · 创国内大模型融资纪录</span>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot" style="background:#fbbf24"></div>
+          <div class="tl-content">
+            <strong style="color:#fde68a">Nscale</strong> C轮$20亿，估值$146亿<br>
+            <span class="tl-date">2026-03-09 · 戴尔+联想+英伟达联合投资</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- China Table -->
+  <div class="section-label">🇨🇳 中国AI大模型上市公司与头部公司</div>
+  <div class="table-wrap" style="margin-bottom:32px;">
+    <table>
+      <thead>
+        <tr>
+          <th>公司</th>
+          <th>核心模型</th>
+          <th>类别</th>
+          <th>融资/市值</th>
+          <th>最新动态</th>
+          <th>投资方</th>
+        </tr>
+      </thead>
+      <tbody id="chinaTable"></tbody>
+    </table>
+  </div>
+
+  <!-- Filter -->
+  <div class="section-label">🌐 全球AI独角兽 (Jan 2026 · 9家新增)</div>
+  <div class="filters">
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="chip">AI Chip</button>
+    <button class="filter-btn" data-filter="infra">Infra / Cloud</button>
+    <button class="filter-btn" data-filter="model">Model / LLM</button>
+    <button class="filter-btn" data-filter="app">App / Video</button>
+    <button class="filter-btn" data-filter="physical">Physical AI</button>
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Search company...">
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th data-sort="name">Company <span class="sort-icon">↕</span></th>
+          <th>Country</th>
+          <th>Category</th>
+          <th data-sort="round">Round <span class="sort-icon">↕</span></th>
+          <th data-sort="amount">Amount <span class="sort-icon">↕</span></th>
+          <th data-sort="valuation">Valuation <span class="sort-icon">↕</span></th>
+          <th>Lead Investors</th>
+        </tr>
+      </thead>
+      <tbody id="unicornTable"></tbody>
+    </table>
+  </div>
+
+  <div class="paginator">
+    <button class="page-btn" id="prevBtn">←</button>
+    <button class="page-btn active" data-page="1">1</button>
+    <button class="page-btn" data-page="2">2</button>
+    <button class="page-btn" id="nextBtn">→</button>
+    <div class="page-info" id="pageInfo">Showing 1-9 of 9</div>
+  </div>
+
+  <footer>
+    Data sources: IT桔子 · 睿兽分析 · 证券时报 · 第一财经 · 创业邦 · CB Insights · Crunchbase<br>
+    AI Unicorn Tracker · Updated March 2026 · For research purposes only
+  </footer>
+</div>
+
+<script>
+// Data
+const chinaData = [
+  { name: 'Kimi (月之暗面)', model: 'K2.5', cat: 'Model / LLM', catClass: 'tag-model', amount: '估值 $100亿+', status: '2025港股上市 · 近20天收入超2025全年', investors: ['阿里', '红杉', '高榕'] },
+  { name: '智谱 AI (Zhipu)', model: 'GLM-5 (7440亿参数)', cat: 'Model / LLM', catClass: 'tag-model', amount: '估值 ~$30亿', status: '2026港股上市 · API涨价30-100%', investors: ['阿里', '美团', '社保基金'] },
+  { name: 'MiniMax', model: 'M2.5 (Agent原生)', cat: 'Model / LLM', catClass: 'tag-model', amount: '估值 ~$25亿', status: '2026港股上市 · OpenRouter调用量第一', investors: ['阿里', '腾讯'] },
+  { name: '阶跃星辰 (StepFun)', model: 'Step-2', cat: 'Model / LLM', catClass: 'tag-model', amount: 'B+轮 超50亿RMB', status: '2026年1月融资额第一', investors: ['腾讯', '阿里'] },
+  { name: 'DeepSeek (深度求索)', model: 'V3.2', cat: 'Model / LLM', catClass: 'tag-model', amount: '非上市', status: '开源SOTA · API性价比最高', investors: ['幻方量化'] },
+  { name: '可灵AI (快手)', model: 'Kling Video', cat: 'App / Video', catClass: 'tag-app', amount: '上市公司体内', status: '视频生成中国领先', investors: ['快手(上市)'] },
+];
+
+const unicorns = [
+  { name: 'OpenAI', country: '🇺🇸 USA', cat: 'Model / LLM', catClass: 'tag-model', round: 'PIPE', amount: '$300亿', valuation: '$7300亿', investors: ['NVIDIA', 'SoftBank', 'GIC'], highlight: true },
+  { name: 'Anthropic', country: '🇺🇸 USA', cat: 'Model / LLM', catClass: 'tag-model', round: 'G轮', amount: '$300亿', valuation: '$3800亿', investors: ['NVIDIA', 'Microsoft', 'GIC'], highlight: true },
+  { name: 'xAI (Musk)', country: '🇺🇸 USA', cat: 'Model / LLM', catClass: 'tag-model', round: 'E轮', amount: '$200亿', valuation: '—', investors: ['NVIDIA', 'Cisco'], highlight: true },
+  { name: 'Nscale', country: '🇺🇸 USA', cat: 'Infra / Cloud', catClass: 'tag-infra', round: 'C轮', amount: '$20亿', valuation: '$146亿', investors: ['NVIDIA', 'Dell', 'Lenovo'], highlight: true },
+  { name: 'Humans&', country: '🇺🇸 USA', cat: 'AI Agent / Collab', catClass: 'tag-chip', round: 'Seed', amount: '$4.8亿', valuation: '$44.8亿', investors: ['NVIDIA', 'Bezos', 'a16z'], highlight: false },
+  { name: 'Ricursive Intelligence', country: '🇺🇸 USA', cat: 'AI Chip Design', catClass: 'tag-chip', round: 'A轮', amount: '$3亿', valuation: '$40亿', investors: ['Sequoia'], highlight: false },
+  { name: 'Etched.ai', country: '🇺🇸 USA', cat: 'AI Chip', catClass: 'tag-chip', round: 'A+轮', amount: '$5亿', valuation: '—', investors: ['Stripes', 'Ribbit'], highlight: false },
+  { name: 'Baseten', country: '🇺🇸 USA', cat: 'Infra / Cloud', catClass: 'tag-infra', round: 'B轮', amount: '$3亿', valuation: '—', investors: ['NVIDIA (50%)'], highlight: false },
+  { name: 'Waabi', country: '🇨🇦 Canada', cat: 'Physical AI', catClass: 'tag-physical', round: 'C轮', amount: '$10亿', valuation: '$30亿', investors: ['NVIDIA', 'Uber', 'Khosla'], highlight: false },
+  { name: 'World Labs (Fei-Fei Li)', country: '🇺🇸 USA', cat: 'World Model', catClass: 'tag-model', round: 'B轮', amount: '$10亿', valuation: '$50亿', investors: ['NVIDIA', 'AMD', 'Autodesk'], highlight: true },
+  { name: 'Wayve', country: '🇬🇧 UK', cat: 'Physical AI', catClass: 'tag-physical', round: 'D轮', amount: '$12亿', valuation: '$86亿', investors: ['NVIDIA', 'SoftBank'], highlight: false },
+  { name: 'Runway', country: '🇺🇸 USA', cat: 'App / Video', catClass: 'tag-app', round: 'F轮', amount: '$3.15亿', valuation: '$53亿', investors: ['NVIDIA', 'AMD', 'Adobe'], highlight: false },
+  { name: 'Higgsfield', country: '🇺🇸 USA', cat: 'App / Video', catClass: 'tag-app', round: 'A+轮', amount: '$0.8亿', valuation: '$13亿', investors: ['Accel', 'Menlo'], highlight: false },
+  { name: 'PaleBlueDot AI', country: '🇺🇸 USA', cat: 'Infra / Cloud', catClass: 'tag-infra', round: 'B轮', amount: '$1.5亿', valuation: '$10亿+', investors: ['B Capital'], highlight: false },
+  { name: 'Upscale AI', country: '🇺🇸 USA', cat: 'Infra / Network', catClass: 'tag-infra', round: 'A轮', amount: '$2亿', valuation: '$10亿+', investors: ['Intel', 'Qualcomm'], highlight: false },
+  { name: 'LiveKit', country: '🇺🇸 USA', cat: 'Infra / RTC', catClass: 'tag-infra', round: 'B轮', amount: '$1亿', valuation: '$10亿', investors: ['Index Ventures'], highlight: false },
+  { name: 'LMArena', country: '🇺🇸 USA', cat: 'Model Eval', catClass: 'tag-model', round: 'A轮', amount: '—', valuation: '—', investors: ['a16z', ' Felicis'], highlight: false },
+  { name: 'Bedrock Robotics', country: '🇺🇸 USA', cat: 'Physical AI', catClass: 'tag-physical', round: 'B轮', amount: '$2.7亿', valuation: '$17.5亿', investors: ['NVIDIA'], highlight: false },
+];
+
+// Render China table
+const chinaTable = document.getElementById('chinaTable');
+chinaData.forEach(c => {
+  chinaTable.innerHTML += `
+    <tr class="china-row">
+      <td>
+        <div class="company-cell">
+          <div class="company-avatar" style="background:linear-gradient(135deg,#ef4444,#f97316)">${c.name[0]}</div>
+          <div><div class="company-name">${c.name}</div><div class="company-tag">${c.model}</div></div>
+        </div>
+      </td>
+      <td><span style="font-size:12px;color:var(--text2)">${c.model}</span></td>
+      <td><span class="tag ${c.catClass}">${c.cat}</span></td>
+      <td class="val-cell high">${c.amount}</td>
+      <td style="font-size:12px;color:var(--text2);max-width:200px;">${c.status}</td>
+      <td><div class="investors">${c.investors.map(i=>`<span class="inv-tag">${i}</span>`).join('')}</div></td>
+    </tr>`;
+});
+
+// Render global table
+let currentFilter = 'all';
+let currentSort = { col: 'valuation', dir: 'desc' };
+let currentPage = 1;
+const perPage = 9;
+
+function renderTable(filter, sort, page) {
+  let data = [...unicorns];
+  if (filter !== 'all') {
+    const map = { chip: ['AI Chip','AI Chip Design'], infra: ['Infra / Cloud','Infra / Network','Infra / RTC'], model: ['Model / LLM','Model Eval','World Model'], app: ['App / Video'], physical: ['Physical AI'] };
+    data = data.filter(d => map[filter] && map[filter].includes(d.cat));
+  }
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  if (search) data = data.filter(d => d.name.toLowerCase().includes(search) || d.cat.toLowerCase().includes(search));
+  data.sort((a, b) => {
+    let av = a[sort.col] || ''; let bv = b[sort.col] || '';
+    av = av.replace(/[^0-9.]/g,'') || '0'; bv = bv.replace(/[^0-9.]/g,'') || '0';
+    return parseFloat(av) < parseFloat(bv) ? (sort.dir === 'asc' ? -1 : 1) : (sort.dir === 'asc' ? 1 : -1);
+  });
+  const total = data.length;
+  const start = (page - 1) * perPage;
+  const pageData = data.slice(start, start + perPage);
+
+  document.getElementById('pageInfo').textContent = `Showing ${start+1}-${Math.min(start+perPage,total)} of ${total}`;
+
+  const tbody = document.getElementById('unicornTable');
+  tbody.innerHTML = '';
+  pageData.forEach(d => {
+    const invStr = d.investors.slice(0,3).map(i=>`<span class="inv-tag">${i}</span>`).join('');
+    tbody.innerHTML += `
+      <tr ${d.highlight ? 'style="background:rgba(99,102,241,0.04)"' : ''}>
+        <td>
+          <div class="company-cell">
+            <div class="company-avatar" style="${d.highlight ? 'background:linear-gradient(135deg,#fbbf24,#f59e0b)' : ''}">${d.name[0]}</div>
+            <div><div class="company-name">${d.name}${d.highlight ? ' ⭐' : ''}</div><div class="company-tag">${d.cat}</div></div>
+          </div>
+        </td>
+        <td><span class="flag">${d.country}</span></td>
+        <td><span class="tag ${d.catClass}">${d.cat.split(' / ')[0]}</span></td>
+        <td><span class="round-badge">${d.round}</span></td>
+        <td class="val-cell">${d.amount}</td>
+        <td class="val-cell high">${d.valuation}</td>
+        <td><div class="investors">${invStr}</div></td>
+      </tr>`;
+  });
+
+  // Update page buttons
+  document.querySelectorAll('.page-btn[data-page]').forEach(b => {
+    b.classList.toggle('active', parseInt(b.dataset.page) === page);
+  });
+  document.getElementById('prevBtn').disabled = page === 1;
+  document.getElementById('nextBtn').disabled = start + perPage >= total;
+}
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.filter;
+    currentPage = 1;
+    renderTable(currentFilter, currentSort, currentPage);
+  });
+});
+
+document.getElementById('searchInput').addEventListener('input', () => {
+  currentPage = 1;
+  renderTable(currentFilter, currentSort, currentPage);
+});
+
+document.querySelectorAll('thead th[data-sort]').forEach(th => {
+  th.addEventListener('click', () => {
+    const col = th.dataset.sort;
+    if (currentSort.col === col) {
+      currentSort.dir = currentSort.dir === 'asc' ? 'desc' : 'asc';
+    } else {
+      currentSort = { col, dir: 'desc' };
+    }
+    document.querySelectorAll('thead th').forEach(h => { h.classList.remove('sort-asc','sort-desc'); });
+    th.classList.add(currentSort.dir === 'asc' ? 'sort-asc' : 'sort-desc');
+    renderTable(currentFilter, currentSort, currentPage);
+  });
+});
+
+document.getElementById('prevBtn').addEventListener('click', () => {
+  if (currentPage > 1) { currentPage--; renderTable(currentFilter, currentSort, currentPage); }
+});
+document.getElementById('nextBtn').addEventListener('click', () => {
+  currentPage++; renderTable(currentFilter, currentSort, currentPage);
+});
+document.querySelectorAll('.page-btn[data-page]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    currentPage = parseInt(btn.dataset.page);
+    renderTable(currentFilter, currentSort, currentPage);
+  });
+});
+
+// Animate bars on load
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.querySelectorAll('.bar-fill').forEach((bar, i) => {
+      const targets = [100, 100, 100, 100, 100]; // all go to 100% for visual
+      const actual = [30, 50, 30, 20, 20]; // actual proportions
+      const maxVal = 5;
+      const val = actual[i];
+      const pct = (val / maxVal) * 100;
+      bar.style.width = pct + '%';
+    });
+  }, 300);
+  renderTable('all', currentSort, 1);
+});
+</script>
+</body>
+</html>
