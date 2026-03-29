@@ -192,10 +192,10 @@ function renderReports(filterText) {
     const searchStr = (r.num + ' ' + r.title + ' ' + r.file).toLowerCase();
     if (filterText && !searchStr.includes(filterText.toLowerCase())) return '';
     visible++;
-    return `<a class="card" href="${r.file}" target="_blank">
+    return `<a class="card" href="${r.path}" target="_blank">
       <div class="num">${r.num ? '#'+r.num : 'N/A'}</div>
       <div class="title">${r.title}</div>
-      <div class="path">${r.file}</div>
+      <div class="path">报告 #${r.num} · 点击访问</div>
     </a>`;
   }).join('');
   
