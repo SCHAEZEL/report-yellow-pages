@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026中国A股AI科技牛追踪仪表板</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    background: #0d1117;
+    color: #e6edf3;
+    min-height: 100vh;
+    padding: 24px;
+  }
+  .header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  .header h1 {
+    font-size: 28px;
+    background: linear-gradient(135deg, #58a6ff, #f78166, #ffa657);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  .header p { color: #8b949e; font-size: 14px; }
+  .badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #238636, #2ea043);
+    color: #fff;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    margin: 4px 2px;
+  }
+  .badge.red { background: linear-gradient(135deg, #da3633, #f85149); }
+  .badge.gold { background: linear-gradient(135deg, #9e6a03, #d29922); }
+  .badge.purple { background: linear-gradient(135deg, #6e40c9, #8957e5); }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .stat-card {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+  }
+  .stat-card .num {
+    font-size: 32px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #58a6ff, #79c0ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .stat-card .label { color: #8b949e; font-size: 13px; margin-top: 4px; }
+  .stat-card .sub { color: #3fb950; font-size: 12px; margin-top: 2px; }
+  .stat-card .sub.red { color: #f85149; }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .card {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .card h3 {
+    font-size: 15px;
+    color: #e6edf3;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card h3 .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #58a6ff;
+  }
+
+  /* Bar Chart */
+  .bar-chart { display: flex; flex-direction: column; gap: 10px; }
+  .bar-item { display: flex; align-items: center; gap: 10px; }
+  .bar-label { width: 90px; font-size: 13px; color: #8b949e; text-align: right; flex-shrink: 0; }
+  .bar-track { flex: 1; height: 24px; background: #21262d; border-radius: 6px; overflow: hidden; position: relative; }
+  .bar-fill {
+    height: 100%;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    padding-left: 8px;
+    font-size: 11px;
+    color: #fff;
+    font-weight: 600;
+    transition: width 1s ease;
+  }
+  .bar-fill.blue { background: linear-gradient(90deg, #1f6feb, #58a6ff); }
+  .bar-fill.green { background: linear-gradient(90deg, #238636, #3fb950); }
+  .bar-fill.orange { background: linear-gradient(90deg, #9e6a03, #d29922); }
+  .bar-fill.purple { background: linear-gradient(90deg, #6e40c9, #8957e5); }
+
+  /* Line Chart */
+  .line-chart-wrap { position: relative; height: 200px; }
+  .line-chart-wrap canvas { width: 100% !important; height: 100% !important; }
+
+  /* Sector pills */
+  .sector-list { display: flex; flex-wrap: wrap; gap: 8px; }
+  .sector-pill {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    border: 1px solid;
+  }
+  .sector-pill.up { background: rgba(63,185,80,0.15); border-color: #3fb950; color: #3fb950; }
+  .sector-pill.down { background: rgba(248,81,73,0.15); border-color: #f85149; color: #f85149; }
+  .sector-pill.neutral { background: rgba(88,166,255,0.15); border-color: #58a6ff; color: #58a6ff; }
+
+  /* Stock picks */
+  .stock-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .stock-item {
+    background: #21262d;
+    border-radius: 8px;
+    padding: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .stock-name { font-size: 14px; font-weight: 600; }
+  .stock-code { font-size: 11px; color: #8b949e; }
+  .stock-badge {
+    font-size: 12px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-weight: 600;
+  }
+  .stock-badge.hot { background: rgba(248,81,73,0.2); color: #ffa657; }
+  .stock-badge.top { background: rgba(63,185,80,0.2); color: #3fb950; }
+  .stock-badge.watch { background: rgba(88,166,255,0.2); color: #58a6ff; }
+
+  /* AI 50 list */
+  .ai50-list { display: flex; flex-direction: column; gap: 8px; }
+  .ai50-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #21262d;
+    border-radius: 8px;
+    padding: 10px 14px;
+  }
+  .rank {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .rank.gold { background: linear-gradient(135deg, #9e6a03, #d29922); color: #fff; }
+  .rank.silver { background: linear-gradient(135deg, #6e7681, #8b949e); color: #fff; }
+  .rank.bronze { background: linear-gradient(135deg, #7c4a2d, #a5714f); color: #fff; }
+  .rank.normal { background: #30363d; color: #8b949e; }
+  .ai50-name { font-size: 14px; font-weight: 600; flex: 1; }
+  .ai50-sector { font-size: 11px; color: #8b949e; }
+  .ai50-val { font-size: 13px; font-weight: 700; color: #ffa657; }
+
+  /* Donut chart */
+  .donut-wrap { display: flex; align-items: center; gap: 24px; }
+  .donut-wrap canvas { flex-shrink: 0; }
+  .donut-legend { display: flex; flex-direction: column; gap: 8px; }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+  /* Flow diagram */
+  .flow-diagram {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+  .flow-node {
+    background: #21262d;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 12px;
+    text-align: center;
+  }
+  .flow-node.primary { border-color: #58a6ff; color: #58a6ff; }
+  .flow-node.success { border-color: #3fb950; color: #3fb950; }
+  .flow-node.warning { border-color: #d29922; color: #d29922; }
+  .flow-node.orange { border-color: #ffa657; color: #ffa657; }
+  .flow-arrow { color: #30363d; font-size: 18px; }
+
+  /* PE comparison */
+  .pe-bars { display: flex; flex-direction: column; gap: 8px; }
+  .pe-item { display: flex; align-items: center; gap: 10px; }
+  .pe-label { width: 80px; font-size: 12px; color: #8b949e; }
+  .pe-track { flex: 1; height: 16px; background: #21262d; border-radius: 4px; overflow: hidden; }
+  .pe-fill { height: 100%; border-radius: 4px; }
+  .pe-val { width: 50px; font-size: 12px; text-align: right; }
+
+  /* Footer */
+  .footer { text-align: center; color: #484f58; font-size: 12px; margin-top: 24px; }
+
+  @media (max-width: 768px) {
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+    .grid-2 { grid-template-columns: 1fr; }
+    .stock-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>📈 2026中国A股AI科技牛追踪仪表板</h1>
+  <p>2026年A股开局：政策催化 × 产业趋势 × 资金流入 = 科技结构牛市</p>
+  <div style="margin-top:12px">
+    <span class="badge">科创50 +4.41%</span>
+    <span class="badge gold">AI芯片前10占7席</span>
+    <span class="badge purple">光模块需求+75%</span>
+    <span class="badge red">CSI 300目标5100</span>
+    <span class="badge">成交额2.57万亿</span>
+  </div>
+</div>
+
+<!-- Key Stats -->
+<div class="stats-row">
+  <div class="stat-card">
+    <div class="num">4,023</div>
+    <div class="label">上证指数（1月5日）</div>
+    <div class="sub">开盘首日 +1.38%</div>
+  </div>
+  <div class="stat-card">
+    <div class="num">6,300亿</div>
+    <div class="label">寒武纪市值（AI芯片第一）</div>
+    <div class="sub">同比 +165%</div>
+  </div>
+  <div class="stat-card">
+    <div class="num">7,000万</div>
+    <div class="label">2026光模块需求（支）</div>
+    <div class="sub">较2025年+75%</div>
+  </div>
+  <div class="stat-card">
+    <div class="num">5,100</div>
+    <div class="label">CSI 300 目标位（瑞银）</div>
+    <div class="sub">潜在涨幅 +7.6%</div>
+  </div>
+</div>
+
+<!-- Row 2: AI 50 + Index Perf -->
+<div class="grid-2">
+  <!-- AI 50 Rankings -->
+  <div class="card">
+    <h3><span class="dot"></span>胡润中国AI 50强 TOP 6</h3>
+    <div class="ai50-list">
+      <div class="ai50-item">
+        <div class="rank gold">🥇</div>
+        <div>
+          <div class="ai50-name">寒武纪</div>
+          <div class="ai50-sector">AI芯片 · 北京</div>
+        </div>
+        <div class="ai50-val">6,300亿</div>
+      </div>
+      <div class="ai50-item">
+        <div class="rank silver">🥈</div>
+        <div>
+          <div class="ai50-name">摩尔线程</div>
+          <div class="ai50-sector">国产GPU · 上海</div>
+        </div>
+        <div class="ai50-val">3,100亿</div>
+      </div>
+      <div class="ai50-item">
+        <div class="rank bronze">🥉</div>
+        <div>
+          <div class="ai50-name">沐曦股份</div>
+          <div class="ai50-sector">国产GPU · 上海</div>
+        </div>
+        <div class="ai50-val">2,500亿</div>
+      </div>
+      <div class="ai50-item">
+        <div class="rank normal">4</div>
+        <div>
+          <div class="ai50-name">地平线</div>
+          <div class="ai50-sector">AI芯片 · 北京</div>
+        </div>
+        <div class="ai50-val">—</div>
+      </div>
+      <div class="ai50-item">
+        <div class="rank normal">5</div>
+        <div>
+          <div class="ai50-name">瑞芯微</div>
+          <div class="ai50-sector">AI芯片 · 深圳</div>
+        </div>
+        <div class="ai50-val">—</div>
+      </div>
+      <div class="ai50-item">
+        <div class="rank normal">6</div>
+        <div>
+          <div class="ai50-name">壁仞科技</div>
+          <div class="ai50-sector">AI芯片 · 上海</div>
+        </div>
+        <div class="ai50-val">—</div>
+      </div>
+    </div>
+    <p style="font-size:11px;color:#484f58;margin-top:12px">算力芯片包揽前10中7席 | 三家合计≈英伟达4% | 2026加速追赶</p>
+  </div>
+
+  <!-- Index Performance -->
+  <div class="card">
+    <h3><span class="dot"></span>2026年首个交易日指数表现</h3>
+    <div class="bar-chart">
+      <div class="bar-item">
+        <div class="bar-label">科创50</div>
+        <div class="bar-track"><div class="bar-fill blue" style="width:100%">+4.41%</div></div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-label">创业板指</div>
+        <div class="bar-track"><div class="bar-fill blue" style="width:66%">+2.9%</div></div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-label">深证成指</div>
+        <div class="bar-track"><div class="bar-fill blue" style="width:51%">+2.24%</div></div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-label">上证指数</div>
+        <div class="bar-track"><div class="bar-fill green" style="width:31%">+1.38%</div></div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-label">北证50</div>
+        <div class="bar-track"><div class="bar-fill green" style="width:41%">+1.8%</div></div>
+      </div>
+    </div>
+    <div style="margin-top:16px;background:#21262d;border-radius:8px;padding:12px">
+      <div style="font-size:12px;color:#8b949e;margin-bottom:6px">全市场成交额</div>
+      <div style="font-size:28px;font-weight:700;color:#ffa657">2.57<span style="font-size:14px;color:#8b949e"> 万亿元</span></div>
+      <div style="font-size:11px;color:#3fb950;margin-top:2px">↑ 较前日 +5,000亿</div>
+    </div>
+  </div>
+</div>
+
+<!-- Row 3: Stock Picks + Sector Rotation -->
+<div class="grid-2">
+  <!-- Top Stock Picks -->
+  <div class="card">
+    <h3><span class="dot"></span>机构1月金股TOP 5</h3>
+    <div class="stock-grid">
+      <div class="stock-item">
+        <div>
+          <div class="stock-name">中际旭创</div>
+          <div class="stock-code">SZ 300308 · 光模块龙头</div>
+        </div>
+        <div><span class="stock-badge hot">🔥 5家推荐</span></div>
+      </div>
+      <div class="stock-item">
+        <div>
+          <div class="stock-name">紫金矿业</div>
+          <div class="stock-code">SH 601899 · 铜金龙头</div>
+        </div>
+        <div><span class="stock-badge top">🏆 4家推荐</span></div>
+      </div>
+      <div class="stock-item">
+        <div>
+          <div class="stock-name">中国中免</div>
+          <div class="stock-code">SH 601888 · 消费复苏</div>
+        </div>
+        <div><span class="stock-badge top">🏆 4家推荐</span></div>
+      </div>
+      <div class="stock-item">
+        <div>
+          <div class="stock-name">思特威-W</div>
+          <div class="stock-code">BJ 688213 · CIS传感器</div>
+        </div>
+        <div><span class="stock-badge watch">⭐ AI芯片</span></div>
+      </div>
+      <div class="stock-item">
+        <div>
+          <div class="stock-name">华海清科</div>
+          <div class="stock-code">BJ 688120 · CMP设备</div>
+        </div>
+        <div><span class="stock-badge watch">⭐ AI科创</span></div>
+      </div>
+      <div class="stock-item">
+        <div>
+          <div class="stock-name">合合信息</div>
+          <div class="stock-code">BJ 688024 · AI应用</div>
+        </div>
+        <div><span class="stock-badge watch">⭐ AI应用</span></div>
+      </div>
+    </div>
+    <p style="font-size:11px;color:#484f58;margin-top:10px">中际旭创：2026年光模块需求4000万→7000万支，1.6T放量</p>
+  </div>
+
+  <!-- Sector Performance -->
+  <div class="card">
+    <h3><span class="dot"></span>板块轮动动态</h3>
+    <div style="margin-bottom:14px">
+      <div style="font-size:12px;color:#8b949e;margin-bottom:8px">2026年以来热点板块</div>
+      <div class="sector-list">
+        <span class="sector-pill up">🚀 AI应用 +7.2%</span>
+        <span class="sector-pill up">💎 脑机接口 +9.95%</span>
+        <span class="sector-pill up">⚡ 算力硬件 +5.8%</span>
+        <span class="sector-pill up">🔋 氢能爆发</span>
+        <span class="sector-pill neutral">🏦 金融地产</span>
+        <span class="sector-pill neutral">🪨 煤炭异动</span>
+        <span class="sector-pill down">📦 算力租赁</span>
+        <span class="sector-pill down">🎬 概念炒作</span>
+        <span class="sector-pill down">🏝 海南自贸港</span>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:12px;color:#8b949e;margin-bottom:8px">主线行情演化路径</div>
+      <div class="flow-diagram">
+        <div class="flow-node primary">DeepSeek概念</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node success">算力硬件</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node warning">AI应用</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node orange">全行业扩散</div>
+      </div>
+    </div>
+    <div style="margin-top:14px;padding:10px;background:#21262d;border-radius:8px;font-size:12px;color:#8b949e">
+      <span style="color:#f85149">⚠️ 注意：</span>AI概念内部分化剧烈，部分蹭热度个股已跌停，强者恒强格局形成
+    </div>
+  </div>
+</div>
+
+<!-- Row 4: PE Comparison + 2026 Outlook -->
+<div class="grid-2">
+  <!-- Global PE Comparison -->
+  <div class="card">
+    <h3><span class="dot"></span>全球主要指数估值对比</h3>
+    <div class="pe-bars">
+      <div class="pe-item">
+        <div class="pe-label">沪深300</div>
+        <div class="pe-track"><div class="pe-fill" style="width:35%;background:#3fb950"></div></div>
+        <div class="pe-val" style="color:#3fb950">14倍</div>
+      </div>
+      <div class="pe-item">
+        <div class="pe-label">科创50</div>
+        <div class="pe-track"><div class="pe-fill" style="width:72%;background:#58a6ff"></div></div>
+        <div class="pe-val" style="color:#58a6ff">&lt;58倍</div>
+      </div>
+      <div class="pe-item">
+        <div class="pe-label">创业板</div>
+        <div class="pe-track"><div class="pe-fill" style="width:60%;background:#58a6ff"></div></div>
+        <div class="pe-val" style="color:#58a6ff">动态低</div>
+      </div>
+      <div class="pe-item">
+        <div class="pe-label">标普500</div>
+        <div class="pe-track"><div class="pe-fill" style="width:85%;background:#d29922"></div></div>
+        <div class="pe-val" style="color:#d29922">较高</div>
+      </div>
+    </div>
+    <div style="margin-top:16px">
+      <div style="font-size:12px;color:#8b949e;margin-bottom:6px">沪深300 股息率</div>
+      <div style="font-size:22px;font-weight:700;color:#3fb950">2.8% <span style="font-size:12px;color:#8b949e">vs 全球主要股指显著更高</span></div>
+    </div>
+    <p style="font-size:11px;color:#484f58;margin-top:8px">沪深300 PE 14倍，明显低于全球主要指数 | 估值具有吸引力</p>
+  </div>
+
+  <!-- 2026 配置方向 -->
+  <div class="card">
+    <h3><span class="dot"></span>2026年五大配置方向</h3>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="background:#21262d;border-radius:8px;padding:10px 12px;border-left:3px solid #58a6ff">
+        <div style="font-size:13px;font-weight:600;color:#58a6ff">🤖 AI科创</div>
+        <div style="font-size:11px;color:#8b949e;margin-top:2px">算力硬件 · 光模块 · AI垂直应用（医疗/教育/办公）</div>
+      </div>
+      <div style="background:#21262d;border-radius:8px;padding:10px 12px;border-left:3px solid #3fb950">
+        <div style="font-size:13px;font-weight:600;color:#3fb950">🚗 高端制造出海</div>
+        <div style="font-size:11px;color:#8b949e;margin-top:2px">储能 · 光伏 · 新能源智能驾驶</div>
+      </div>
+      <div style="background:#21262d;border-radius:8px;padding:10px 12px;border-left:3px solid #d29922">
+        <div style="font-size:13px;font-weight:600;color:#d29922">📈 顺周期+涨价链</div>
+        <div style="font-size:11px;color:#8b949e;margin-top:2px">铜 · 铝受益PPI回暖，紫金矿业/神火股份</div>
+      </div>
+      <div style="background:#21262d;border-radius:8px;padding:10px 12px;border-left:3px solid #f78166">
+        <div style="font-size:13px;font-weight:600;color:#f78166">🛒 扩内需消费</div>
+        <div style="font-size:11px;color:#8b949e;margin-top:2px">促消费资金3000→5000亿，家电/汽车/家居</div>
+      </div>
+      <div style="background:#21262d;border-radius:8px;padding:10px 12px;border-left:3px solid #8957e5">
+        <div style="font-size:13px;font-weight:600;color:#8957e5">🏦 红利底仓</div>
+        <div style="font-size:11px;color:#8b949e;margin-top:2px">高股息大盘股，江河集团股息率~6%</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Analyst Views -->
+<div class="card" style="margin-bottom:24px">
+  <h3><span class="dot"></span>机构2026年A股展望共识</h3>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:4px">
+    <div style="background:#21262d;border-radius:8px;padding:14px;text-align:center">
+      <div style="font-size:20px;margin-bottom:4px">📊</div>
+      <div style="font-size:12px;font-weight:700;color:#e6edf3">兴业证券</div>
+      <div style="font-size:11px;color:#8b949e;margin-top:4px">TMT一枝独秀 → <span style="color:#3fb950">全面均衡牛市</span><br>"十五五开局第一年是周期大年"</div>
+    </div>
+    <div style="background:#21262d;border-radius:8px;padding:14px;text-align:center">
+      <div style="font-size:20px;margin-bottom:4px">🏦</div>
+      <div style="font-size:12px;font-weight:700;color:#e6edf3">瑞银/ Julius Baer</div>
+      <div style="font-size:11px;color:#8b949e;margin-top:4px">CSI 300目标 <span style="color:#ffa657;font-weight:600">5100点</span><br>港股恒指目标29500（+12.8%）</div>
+    </div>
+    <div style="background:#21262d;border-radius:8px;padding:14px;text-align:center">
+      <div style="font-size:20px;margin-bottom:4px">🏛️</div>
+      <div style="font-size:12px;font-weight:700;color:#e6edf3">高盛</div>
+      <div style="font-size:11px;color:#8b949e;margin-top:4px">2027年底中国股市涨 <span style="color:#ffa657;font-weight:600">+38%</span><br>企业利润2026增14%，2027增12%</div>
+    </div>
+  </div>
+</div>
+
+<!-- Risks -->
+<div class="card" style="border-color:#da3633;margin-bottom:24px">
+  <h3><span class="dot" style="background:#f85149"></span>⚠️ 主要风险提示</h3>
+  <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:4px">
+    <div style="background:rgba(218,54,51,0.1);border:1px solid rgba(248,81,73,0.3);border-radius:8px;padding:10px;text-align:center">
+      <div style="font-size:11px;color:#f85149;font-weight:600">政策落地</div>
+      <div style="font-size:10px;color:#8b949e;margin-top:4px">促消费资金传导效率不确定</div>
+    </div>
+    <div style="background:rgba(218,54,51,0.1);border:1px solid rgba(248,81,73,0.3);border-radius:8px;padding:10px;text-align:center">
+      <div style="font-size:11px;color:#f85149;font-weight:600">技术路线</div>
+      <div style="font-size:10px;color:#8b949e;margin-top:4px">AI算力/新能源技术迭代风险</div>
+    </div>
+    <div style="background:rgba(218,54,51,0.1);border:1px solid rgba(248,81,73,0.3);border-radius:8px;padding:10px;text-align:center">
+      <div style="font-size:11px;color:#f85149;font-weight:600">外部扰动</div>
+      <div style="font-size:10px;color:#8b949e;margin-top:4px">美联储鹰派/中美科技博弈</div>
+    </div>
+    <div style="background:rgba(218,54,51,0.1);border:1px solid rgba(248,81,73,0.3);border-radius:8px;padding:10px;text-align:center">
+      <div style="font-size:11px;color:#f85149;font-weight:600">板块震荡</div>
+      <div style="font-size:10px;color:#8b949e;margin-top:4px">热门板块宽幅震荡加剧</div>
+    </div>
+    <div style="background:rgba(218,54,51,0.1);border:1px solid rgba(248,81,73,0.3);border-radius:8px;padding:10px;text-align:center">
+      <div style="font-size:11px;color:#f85149;font-weight:600">盈利兑现</div>
+      <div style="font-size:10px;color:#8b949e;margin-top:4px">"讲故事"行情难以为继</div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  数据来源：证券时报、21财经、东方财富、胡润研究院、兴业证券、粤开证券、高盛、瑞银 | 截至2026年3月<br>
+  本仪表板仅供参考，不构成投资建议
+</div>
+
+</body>
+</html>
